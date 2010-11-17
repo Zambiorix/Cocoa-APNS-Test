@@ -15,6 +15,7 @@
 		43601C271292DF3000D73245 /* GZEApplication.m in Sources */ = {isa = PBXBuildFile; fileRef = 43601C251292DF3000D73245 /* GZEApplication.m */; };
 		43601C281292DF3000D73245 /* Main.m in Sources */ = {isa = PBXBuildFile; fileRef = 43601C261292DF3000D73245 /* Main.m */; };
 		43601C361292E0AA00D73245 /* Icon.icns in Resources */ = {isa = PBXBuildFile; fileRef = 43601C351292E0AA00D73245 /* Icon.icns */; };
+		439DF1C91294972000D7B1F2 /* LICENCE in Resources */ = {isa = PBXBuildFile; fileRef = 439DF1C81294972000D7B1F2 /* LICENCE */; };
 		43A563F01292E33800E59383 /* AsyncSocket.m in Sources */ = {isa = PBXBuildFile; fileRef = 43A563ED1292E33800E59383 /* AsyncSocket.m */; };
 		43A564261292E66F00E59383 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 43A564251292E66F00E59383 /* Security.framework */; };
 		43A565FF1292FB5F00E59383 /* Defaults.plist in Resources */ = {isa = PBXBuildFile; fileRef = 43A565FE1292FB5F00E59383 /* Defaults.plist */; };
@@ -46,6 +47,7 @@
 		43601C251292DF3000D73245 /* GZEApplication.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GZEApplication.m; sourceTree = "<group>"; };
 		43601C261292DF3000D73245 /* Main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Main.m; sourceTree = "<group>"; };
 		43601C351292E0AA00D73245 /* Icon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = Icon.icns; sourceTree = "<group>"; };
+		439DF1C81294972000D7B1F2 /* LICENCE */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = LICENCE; sourceTree = "<group>"; };
 		43A563EC1292E33800E59383 /* AsyncSocket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AsyncSocket.h; sourceTree = "<group>"; };
 		43A563ED1292E33800E59383 /* AsyncSocket.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AsyncSocket.m; sourceTree = "<group>"; };
 		43A564251292E66F00E59383 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
@@ -225,6 +227,7 @@
 			isa = PBXGroup;
 			children = (
 				43E00C43129495890080AA07 /* README */,
+				439DF1C81294972000D7B1F2 /* LICENCE */,
 			);
 			name = README;
 			sourceTree = "<group>";
@@ -286,6 +289,7 @@
 				43C2A06D1294095E005FD20D /* Play.png in Resources */,
 				43C2A06E1294095E005FD20D /* Stop.png in Resources */,
 				43E00C44129495890080AA07 /* README in Resources */,
+				439DF1C91294972000D7B1F2 /* LICENCE in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
