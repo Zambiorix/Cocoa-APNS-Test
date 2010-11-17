@@ -18,55 +18,67 @@
 //	defines
 //	--------------------------------------------------------------------------------------------------------------------
 
-#define KEY_DEVELOPMENT			@"Apple Development Push Services"
+#define APNS_DEVELOPMENT			@"Apple Development Push Services"
 
-#define KEY_PRODUCTION			@"Apple Production Push Services"
+#define APNS_PRODUCTION				@"Apple Production Push Services"
 
-#define HOST_DEVELOPMENT		@"gateway.sandbox.push.apple.com"
+#define HOST_GW_DEVELOPMENT			@"gateway.sandbox.push.apple.com"
 
-#define HOST_PRODUCTION			@"gateway.push.apple.com"
+#define HOST_GW_PRODUCTION			@"gateway.push.apple.com"
 
-#define PORT_DEVELOPMENT		2195
+#define PORT_GW_DEVELOPMENT			2195
 
-#define PORT_PRODUCTION			2195
+#define PORT_GW_PRODUCTION			2195
 
-#define JSON_FORMAT				@"{\"aps\":{%@}}"
+#define HOST_FB_DEVELOPMENT			@"feedback.sandbox.push.apple.com"
 
-#define JSON_ALERT_FORMAT		@"\"alert\":\"%@\""
+#define HOST_FB_PRODUCTION			@"feedback.push.apple.com"
 
-#define JSON_BADGE_FORMAT		@"\"badge\":%d"
+#define PORT_FB_DEVELOPMENT			2196
 
-#define JSON_SOUND_FORMAT		@"\"sound\":\"%@\""
+#define PORT_FB_PRODUCTION			2196
 
-//	--------------------------------------------------------------------------------------------------------------------
+#define DEFAULT_TIMEOUT				10.0f
 
-#define HELP @"http://developer.apple.com/library/ios/#documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG"
+#define DEFAULT_NOTIFICATION_ID		@"0000000000000000000000000000000000000000000000000000000000000000"
+
+#define DEFAULT_NOTIFICATION_NAME	@"?"
+
+#define JSON_FORMAT					@"{\"aps\":{%@}}"
+
+#define JSON_ALERT_FORMAT			@"\"alert\":\"%@\""
+
+#define JSON_BADGE_FORMAT			@"\"badge\":%d"
+
+#define JSON_SOUND_FORMAT			@"\"sound\":\"%@\""
 
 //	--------------------------------------------------------------------------------------------------------------------
 //	defines
 //	--------------------------------------------------------------------------------------------------------------------
 
-#define KEY_SELECTED			@"kSelected"
+#define KEY_CERTIFICATE				@"kCertificate"
 
-#define KEY_NAME				@"kName"
+#define KEY_SELECTED				@"kSelected"
 
-#define KEY_NOTIFICATION_ID		@"kNotificationID"
+#define KEY_NAME					@"kName"
 
-#define KEY_NOTIFICATION_IDS	@"kNotificationIDs"
+#define KEY_NOTIFICATION_ID			@"kNotificationID"
 
-#define KEY_SANDBOX				@"kSandbox"
+#define KEY_SANDBOX					@"kSandbox"
 
-#define KEY_ALERT_ENABLED		@"kAlertEnabled"
+#define KEY_ALERT_ENABLED			@"kAlertEnabled"
 
-#define KEY_ALERT				@"kAlert"
+#define KEY_ALERT					@"kAlert"
 
-#define KEY_BADGE_ENABLED		@"kBadgeEnabled"
+#define KEY_BADGE_ENABLED			@"kBadgeEnabled"
 
-#define KEY_BADGE				@"kBadge"
+#define KEY_BADGE					@"kBadge"
 
-#define KEY_SOUND_ENABLED		@"kSoundEnabled"
+#define KEY_SOUND_ENABLED			@"kSoundEnabled"
 
-#define KEY_SOUND				@"kSound"
+#define KEY_SOUND					@"kSound"
+
+#define KEY_HELP_APNS				@"kHelpAPNS"
 
 //	--------------------------------------------------------------------------------------------------------------------
 //	class GZEApplication
@@ -106,7 +118,11 @@
 
 @synthesize textFieldSound;
 
-@synthesize buttonPost;
+@synthesize textViewOutput;
+
+@synthesize buttonSendNotification;
+
+@synthesize textFieldFooter;
 
 //	--------------------------------------------------------------------------------------------------------------------
 //	method getAttribute
@@ -199,11 +215,29 @@
 
 						if (isSandbox)
 						{
-							includeCertificate = [(NSString *)commonName hasPrefix:KEY_DEVELOPMENT];
+							includeCertificate = [(NSString *)commonName hasPrefix:APNS_DEVELOPMENT];
 						}
 						else
 						{
-							includeCertificate = [(NSString *)commonName hasPrefix:KEY_PRODUCTION];
+							includeCertificate = [(NSString *)commonName hasPrefix:APNS_PRODUCTION];
+						}
+				
+						if (includeCertificate)
+						{
+							SecKeyRef privateRef = nil;
+							
+							if (SecIdentityCopyPrivateKey(identityRef, &privateRef) == noErr)
+							{
+								NSString *name = [self getStringAttribute:kSecKeyPrintName ofItem:privateRef];
+								
+								[aCertificates addObject:[GZECertificate certificateWithKey:(NSString *)commonName 
+														  
+																				   withName:name 
+														  
+																			   withIdentity:identityRef]];		
+								
+								CFRelease(privateRef);				
+							}
 						}
 												
 						CFRelease(commonName);
@@ -211,23 +245,7 @@
 					
 					CFRelease(certificateRef);
 				}
-				
-				if (includeCertificate)
-				{
-					SecKeyRef privateRef = nil;
-					
-					if (SecIdentityCopyPrivateKey(identityRef, &privateRef) == noErr)
-					{
-						NSString *name = [self getStringAttribute:kSecKeyPrintName ofItem:privateRef];
-
-						[aCertificates addObject:[GZECertificate certificateWithName:name 
-																		
-																		withIdentity:identityRef]];		
-					
-						CFRelease(privateRef);				
-					}
-				}
-								
+												
 				CFRelease(identityRef);				
 			}
 			
@@ -244,17 +262,21 @@
 
 - (void)updateStatus
 {
-	BOOL hasNoSocket = (asyncSocket == nil);
+	BOOL hasNoSocket = (socketGateway == nil);
 			
 	BOOL hasCertificate = ([comboBoxCertificate indexOfSelectedItem] >= 0);
 
-	BOOL hasNotificationIDs = NO;
+	BOOL hasNotificationIDs = (notificationIDs != nil);
+
+	BOOL hasNotificationIDsSelected = ([tableViewNotificationIDs numberOfSelectedRows] > 0);
+
+	BOOL hasNotificationIDsToSend = NO;
 	
 	for (NSDictionary *data in notificationIDs)
 	{
 		if ([(NSNumber *)[data objectForKey:KEY_SELECTED] boolValue])
 		{
-			hasNotificationIDs = YES;
+			hasNotificationIDsToSend = YES;
 			
 			break;
 		}
@@ -268,9 +290,11 @@
 
 	[buttonSandbox setEnabled:hasNoSocket];
 
-	[buttonAddNotificationID setEnabled:YES];
+	[tableViewNotificationIDs setEnabled:hasNotificationIDs];
 	
-	[buttonDeleteNotificationID setEnabled:([tableViewNotificationIDs numberOfSelectedRows] > 0)];
+	[buttonAddNotificationID setEnabled:hasNotificationIDs];
+	
+	[buttonDeleteNotificationID setEnabled:hasNotificationIDs && hasNotificationIDsSelected];
 	
 	[textFieldAlert setEnabled:(buttonAlert.state == NSOnState)];
 
@@ -278,7 +302,7 @@
 
 	[textFieldSound setEnabled:(buttonSound.state == NSOnState)];
 
-	[buttonPost setEnabled:!hasNoSocket && hasNotificationIDs];
+	[buttonSendNotification setEnabled:!hasNoSocket && hasNotificationIDsToSend];
 }
 
 //	--------------------------------------------------------------------------------------------------------------------
@@ -294,36 +318,64 @@
 	NSDictionary *defaultsDictionary = [NSDictionary dictionaryWithContentsOfFile:defaultsFile];
 	
     [[NSUserDefaults standardUserDefaults] registerDefaults:defaultsDictionary];	
-
-	//	initialize certificates
-
-	certificates = [[NSMutableArray alloc] init];
-	
-	[self loadCertificates:certificates];
-	
-	[comboBoxCertificate reloadData];
-			
-	//	initialize notification ids
-			
-	NSArray *array = [[NSUserDefaults standardUserDefaults] arrayForKey:KEY_NOTIFICATION_IDS];
-	
-	notificationIDs = (NSMutableArray *)CFPropertyListCreateDeepCopy(kCFAllocatorDefault, 
-																	 
-																	 (CFPropertyListRef)array, 
-																	 
-																	 kCFPropertyListMutableContainers);		
-	[tableViewNotificationIDs reloadData];
-	
-	//	register drag types
-	
-	[tableViewNotificationIDs registerForDraggedTypes:[NSArray arrayWithObject:NSPasteboardTypeString]];
-	
+		
 	//	loading defaults : sandbox
 	
 	BOOL isSandbox = [[NSUserDefaults standardUserDefaults] boolForKey:KEY_SANDBOX];
 
 	buttonSandbox.state = isSandbox ? NSOnState : NSOffState;
 
+	//	initialize certificates
+	
+	certificates = [[NSMutableArray alloc] init];
+	
+	[self loadCertificates:certificates];
+	
+	[comboBoxCertificate reloadData];
+	
+	//	loading defaults : certificate
+	
+	currentCertificate = nil;
+
+	NSString *certificateKey = [[NSUserDefaults standardUserDefaults] stringForKey:KEY_CERTIFICATE];
+	
+	for (NSUInteger index = 0; index < certificates.count; index++)
+	{
+		GZECertificate *certificate = [certificates objectAtIndex:index];
+		
+		if ([certificate.key isEqualToString:certificateKey])
+		{
+			[comboBoxCertificate selectItemAtIndex:index];
+			
+			currentCertificate = certificate;
+			
+			break;
+		}
+	}
+	
+	//	notification id's
+	
+	notificationIDs = nil;
+	
+	if (currentCertificate)
+	{
+		NSArray *array = [[NSUserDefaults standardUserDefaults] arrayForKey:currentCertificate.key];
+		
+		notificationIDs = (NSMutableArray *)CFPropertyListCreateDeepCopy(kCFAllocatorDefault, 
+																		 
+																		 (CFPropertyListRef)array, 
+																		 
+																		 kCFPropertyListMutableContainers);				
+		if (!notificationIDs)
+		{
+			notificationIDs = [[NSMutableArray alloc] init];
+						
+			[[NSUserDefaults standardUserDefaults] setObject:notificationIDs forKey:currentCertificate.key];
+		}
+	}
+	
+	[tableViewNotificationIDs reloadData];
+	
 	//	loading defaults : alert
 
 	BOOL isAlert = [[NSUserDefaults standardUserDefaults] boolForKey:KEY_ALERT_ENABLED];
@@ -347,11 +399,15 @@
 	buttonSound.state =  isSound ? NSOnState : NSOffState;
 	
 	textFieldSound.stringValue = [[NSUserDefaults standardUserDefaults] stringForKey:KEY_SOUND];
-
+	
+	//	register drag types
+	
+	[tableViewNotificationIDs registerForDraggedTypes:[NSArray arrayWithObject:NSPasteboardTypeString]];
+	
 	//	update status
 	
 	[self updateStatus];
-
+	
 	//	window
 	
 	[window center];	
@@ -365,23 +421,27 @@
 
 - (void)applicationWillTerminate:(NSNotification *)aNotification
 {		
-	//	cleanup socket
+	//	cleanup socket gateway
 	
-	[asyncSocket setDelegate:nil];
+	[socketGateway setDelegate:nil];
 	
-	[asyncSocket disconnect];
+	[socketGateway disconnect];
 	
-	[asyncSocket release]; asyncSocket = nil;
-	
-	//	store defaults
-	
-	[[NSUserDefaults standardUserDefaults] setObject:textFieldAlert.stringValue forKey:KEY_ALERT];
+	[socketGateway release]; socketGateway = nil;
 
-	[[NSUserDefaults standardUserDefaults] setInteger:textFieldBadge.stringValue.intValue forKey:KEY_BADGE];
-
-	[[NSUserDefaults standardUserDefaults] setObject:textFieldSound.stringValue forKey:KEY_SOUND];
+	//	cleanup socket feedback
 	
-	//	cleanup certificates & notification ids
+	[socketFeedback setDelegate:nil];
+	
+	[socketFeedback disconnect];
+	
+	[socketFeedback release]; socketFeedback = nil;
+	
+	//	cleanup feedback timer
+	
+	[feedbackTimer invalidate]; feedbackTimer = nil;
+	
+	//	cleanup certificates & notification id's
 	
 	[certificates release]; certificates = nil;
 	
@@ -412,6 +472,41 @@
 
 - (void)comboBoxSelectionDidChange:(NSNotification *)notification
 {	
+	//	store certificate defaults
+	
+	NSUInteger index = comboBoxCertificate.indexOfSelectedItem;
+
+	currentCertificate = (index >= 0) ? [certificates objectAtIndex:index] : nil;
+		
+	id object = currentCertificate ? [currentCertificate key] : @"";
+	
+	[[NSUserDefaults standardUserDefaults] setObject:object forKey:KEY_CERTIFICATE];
+	
+	//	notification id's
+
+	[notificationIDs release]; notificationIDs = nil;
+	
+	if (currentCertificate)
+	{
+		NSArray *array = [[NSUserDefaults standardUserDefaults] arrayForKey:currentCertificate.key];
+		
+		notificationIDs = (NSMutableArray *)CFPropertyListCreateDeepCopy(kCFAllocatorDefault, 
+																		 
+																		 (CFPropertyListRef)array, 
+																		 
+																		 kCFPropertyListMutableContainers);				
+		if (!notificationIDs)
+		{
+			notificationIDs = [[NSMutableArray alloc] init];
+			
+			[[NSUserDefaults standardUserDefaults] setObject:notificationIDs forKey:currentCertificate.key];
+		}
+	}
+	
+	[tableViewNotificationIDs reloadData];
+	
+	//	update status
+	
 	[self updateStatus];
 }
 
@@ -431,8 +526,8 @@
 //	--------------------------------------------------------------------------------------------------------------------
 
 - (NSInteger)numberOfRowsInTableView:(NSTableView *)tableView 
-{	
-    return notificationIDs.count;
+{
+    return notificationIDs ? notificationIDs.count : 0;
 }
 
 //	--------------------------------------------------------------------------------------------------------------------
@@ -452,7 +547,7 @@
 {          
 	[[notificationIDs objectAtIndex:row] setObject:value forKey:[column identifier]];
 
-	[[NSUserDefaults standardUserDefaults] setObject:notificationIDs forKey:KEY_NOTIFICATION_IDS];
+	[[NSUserDefaults standardUserDefaults] setObject:notificationIDs forKey:currentCertificate.key];
 
 	//	update status
 	
@@ -480,7 +575,7 @@
 	   
 	   proposedDropOperation:(NSTableViewDropOperation)operation
 {
-	//	TODO	check input
+	//	TODO	validate input
 	
     return NSDragOperationEvery;
 }
@@ -515,7 +610,7 @@
 			
 			[tableViewNotificationIDs selectRowIndexes:indexes byExtendingSelection:NO];
 
-			[[NSUserDefaults standardUserDefaults] setObject:notificationIDs forKey:KEY_NOTIFICATION_IDS];
+			[[NSUserDefaults standardUserDefaults] setObject:notificationIDs forKey:currentCertificate.key];
 
 			break;
 		}
@@ -526,7 +621,7 @@
 										 
 										 [NSNumber numberWithBool:NO],		KEY_SELECTED,
 										 
-										 @"new",							KEY_NAME,
+										 DEFAULT_NOTIFICATION_NAME,			KEY_NAME,
 										 
 										 dropped,							KEY_NOTIFICATION_ID,
 										 
@@ -540,7 +635,7 @@
 			
 			[tableViewNotificationIDs selectRowIndexes:indexes byExtendingSelection:NO];
 			
-			[[NSUserDefaults standardUserDefaults] setObject:notificationIDs forKey:KEY_NOTIFICATION_IDS];
+			[[NSUserDefaults standardUserDefaults] setObject:notificationIDs forKey:currentCertificate.key];
 
 			break;
 		}
@@ -556,28 +651,174 @@
 }
 
 //	--------------------------------------------------------------------------------------------------------------------
+//	method buildNotificationID onLocation
+//	--------------------------------------------------------------------------------------------------------------------
+
+- (NSUInteger)buildNotificationID:(NSString *)aNotificationID onLocation:(char *)aLocation
+{	
+	const char *hexChars = [aNotificationID UTF8String];
+	
+	const char *nextHex = hexChars;
+	
+	NSUInteger count = 0;
+	
+	//	TODO	check
+	
+	while (count < 32 && (count < strlen(hexChars)))
+	{
+		sscanf(nextHex, "%2x", (unsigned int *)aLocation);
+		
+		nextHex += 2;
+		
+		aLocation++;
+		
+		count++;
+	}
+	
+	return 32;
+}
+
+//	--------------------------------------------------------------------------------------------------------------------
+//	method buildPayload
+//	--------------------------------------------------------------------------------------------------------------------
+
+- (NSUInteger)buildPayload:(NSMutableData *)aData
+{
+	//	payload : alert
+	
+	NSString *plAlert = nil;
+	
+	if (buttonAlert.state == NSOnState)
+	{
+		NSString *string = textFieldAlert.stringValue;
+		
+		//	TODO	sanitize
+		
+		plAlert = [NSString stringWithFormat:JSON_ALERT_FORMAT, string];
+	}
+	
+	//	payload : badge
+	
+	NSString *plBadge = nil;
+	
+	if (buttonBadge.state == NSOnState)
+	{			
+		plBadge = [NSString stringWithFormat:JSON_BADGE_FORMAT, textFieldBadge.stringValue.intValue];
+	}
+	
+	//	payload : sound
+	
+	NSString *plSound = nil;
+	
+	if (buttonSound.state == NSOnState)
+	{
+		NSString *string = textFieldSound.stringValue;
+		
+		//	TODO	sanitize
+		
+		plSound = [NSString stringWithFormat:JSON_SOUND_FORMAT, string];
+	}
+	
+	//	payload
+	
+	NSMutableString *payloadAPS = [NSMutableString string];
+	
+	if (plAlert)
+	{
+		if (payloadAPS.length > 0)
+		{
+			[payloadAPS appendFormat:@",%@", plAlert];
+		}
+		else 
+		{
+			[payloadAPS appendFormat:@"%@", plAlert];
+		}
+	}
+	
+	if (plBadge)
+	{
+		if (payloadAPS.length > 0)
+		{
+			[payloadAPS appendFormat:@",%@", plBadge];
+		}
+		else 
+		{
+			[payloadAPS appendFormat:@"%@", plBadge];
+		}
+	}
+	
+	if (plSound)
+	{
+		if (payloadAPS.length > 0)
+		{
+			[payloadAPS appendFormat:@",%@", plSound];
+		}
+		else 
+		{
+			[payloadAPS appendFormat:@"%@", plSound];
+		}
+	}
+	
+	NSString *payload = [NSString stringWithFormat:JSON_FORMAT, payloadAPS];
+	
+	const char *payloadChar = [payload cStringUsingEncoding:NSUTF8StringEncoding];
+	
+	NSUInteger length = strlen(payloadChar);
+	
+	[aData appendBytes:payloadChar length:length];
+	
+	return length;
+}
+
+//	--------------------------------------------------------------------------------------------------------------------
+//	method control isValidObject
+//	--------------------------------------------------------------------------------------------------------------------
+
+- (BOOL)control:(NSControl *)control isValidObject:(id)object
+{
+	if (control == textFieldAlert)
+	{
+		[[NSUserDefaults standardUserDefaults] setObject:object forKey:KEY_ALERT];
+	}
+	
+	if (control == textFieldBadge)
+	{
+		[[NSUserDefaults standardUserDefaults] setObject:object forKey:KEY_BADGE];		
+	}
+
+	if (control == textFieldSound)
+	{
+		[[NSUserDefaults standardUserDefaults] setObject:object forKey:KEY_SOUND];
+	}
+	
+	return YES;
+}
+
+//	--------------------------------------------------------------------------------------------------------------------
 //	method clickConnect
 //	--------------------------------------------------------------------------------------------------------------------
 
 - (IBAction)clickConnect:(NSButton *)aSender
 {
-	if (!asyncSocket)
-	{		
+	if (!socketGateway)
+	{	
+		NSLog(@"Socket GW : Connect");
+
 		BOOL isSandbox = (self.buttonSandbox.state == NSOnState);
 		
-		NSString *host = isSandbox ? HOST_DEVELOPMENT : HOST_PRODUCTION;
+		NSString *host = isSandbox ? HOST_GW_DEVELOPMENT : HOST_GW_PRODUCTION;
 		
-		NSUInteger port = isSandbox ? PORT_DEVELOPMENT : PORT_PRODUCTION; 
+		NSUInteger port = isSandbox ? PORT_GW_DEVELOPMENT : PORT_GW_PRODUCTION; 
 		
 		//	create socket
 		
-		asyncSocket = [[AsyncSocket alloc] initWithDelegate:self];
+		socketGateway = [[AsyncSocket alloc] initWithDelegate:self];
 		
-		if (![asyncSocket connectToHost:host onPort:port error:nil])
-		{			
-			[asyncSocket disconnect];
+		if (![socketGateway connectToHost:host onPort:port error:nil])
+		{
+			[socketGateway disconnect];
 			
-			[asyncSocket release]; asyncSocket = nil;
+			[socketGateway release]; socketGateway = nil;
 		}
 	}
 	
@@ -592,12 +833,27 @@
 
 - (IBAction)clickDisconnect:(NSButton *)aSender
 {
-	if (asyncSocket)
+	//	cleanup socket gateway
+	
+	if (socketGateway)
 	{
-		[asyncSocket disconnect];
+		[socketGateway disconnect];
 		
-		[asyncSocket autorelease]; asyncSocket = nil;
+		[socketGateway autorelease]; socketGateway = nil;
 	}
+
+	//	cleanup socket feedback
+
+	if (socketFeedback)
+	{
+		[socketFeedback disconnect];
+		
+		[socketFeedback autorelease]; socketFeedback = nil;
+	}
+
+	//	cleanup feedback timer
+	
+	[feedbackTimer invalidate]; feedbackTimer = nil;
 	
 	//	update status
 
@@ -616,12 +872,20 @@
 			
 	//	load certificates
 	
+	currentCertificate = nil;
+
 	[self loadCertificates:certificates];
 	
 	[comboBoxCertificate setStringValue:@""];
 	
 	[comboBoxCertificate reloadData];
 	
+	//	cleanup notification id's
+		
+	[notificationIDs release]; notificationIDs = nil;
+	
+	[tableViewNotificationIDs reloadData];
+
 	//	update status
 	
 	[self updateStatus];
@@ -637,9 +901,9 @@
 								 
 								 [NSNumber numberWithBool:NO],		KEY_SELECTED,
 								 
-								 @"new",							KEY_NAME,
+								 DEFAULT_NOTIFICATION_NAME,			KEY_NAME,
 								 
-								 @"enter notification id",			KEY_NOTIFICATION_ID,
+								 DEFAULT_NOTIFICATION_ID,			KEY_NOTIFICATION_ID,
 								 
 								 nil];
 	
@@ -651,7 +915,7 @@
 		
 	[tableViewNotificationIDs selectRowIndexes:indexes byExtendingSelection:NO];
 
-	[[NSUserDefaults standardUserDefaults] setObject:notificationIDs forKey:KEY_NOTIFICATION_IDS];
+	[[NSUserDefaults standardUserDefaults] setObject:notificationIDs forKey:currentCertificate.key];
 }
 
 //	--------------------------------------------------------------------------------------------------------------------
@@ -666,7 +930,7 @@
 
 	[tableViewNotificationIDs selectRowIndexes:[NSIndexSet indexSet] byExtendingSelection:NO];
 
-	[[NSUserDefaults standardUserDefaults] setObject:notificationIDs forKey:KEY_NOTIFICATION_IDS];
+	[[NSUserDefaults standardUserDefaults] setObject:notificationIDs forKey:currentCertificate.key];
 }
 
 //	--------------------------------------------------------------------------------------------------------------------
@@ -715,10 +979,10 @@
 }
 
 //	--------------------------------------------------------------------------------------------------------------------
-//	method clickPost
+//	method clickSendNotification
 //	--------------------------------------------------------------------------------------------------------------------
 
-- (IBAction)clickPost:(NSButton *)aSender
+- (IBAction)clickSendNotification:(NSButton *)aSender
 {	
 	for (NSDictionary *data in notificationIDs)
 	{
@@ -731,138 +995,41 @@
 			continue;
 		}
 								
-		//	header data
+		//	output 
 		
-		char headerData[37];
-		
-		headerData[0] = 0;		//	fixed
-		
-		headerData[1] = 0;		//	fixed
-		
-		headerData[2] = 32;		//	fixed
-						
-		//	notification id
+		NSMutableData *output = [[NSMutableData alloc] init];
+
+		NSMutableData *outputPayload = [[NSMutableData alloc] init];
+				
+		//	header
 	
-		char *nextChar = &headerData[3];
+		char header[37];
 
-		const char *hexChars = [[data objectForKey:KEY_NOTIFICATION_ID] UTF8String];
+		header[ 0] = 0;		//	fixed
 		
-		const char *nextHex = hexChars;
-			
-		NSUInteger count = 0;
+		header[ 1] = 0;		//	fixed
 		
-		//	TODO	check
+		header[ 2] = [self buildNotificationID:[data objectForKey:KEY_NOTIFICATION_ID] onLocation:&header[3]];
+						
+		header[35] = 0;		//	fixed
 		
-		while (count < 32 && (count < strlen(hexChars)))
-		{
-			sscanf(nextHex, "%2x", (unsigned int *)nextChar);
-			
-			nextHex += 2;
-			
-			nextChar++;
-			
-			count++;
-		}
+		header[36] = [self buildPayload:outputPayload];
 		
-		headerData[35] = 0;		//	fixed
+		//	prepare output buffer
 		
-		//	payload : alert
+		[output appendBytes:header length:sizeof(header)];
 		
-		NSString *plAlert = nil;
+		[output appendData:outputPayload];
 		
-		if (buttonAlert.state == NSOnState)
-		{
-			NSString *string = textFieldAlert.stringValue;
+		//	send notification
+							
+		[socketGateway writeData:output withTimeout:DEFAULT_TIMEOUT tag:0];
 
-			//	TODO	sanitize
-			
-			plAlert = [NSString stringWithFormat:JSON_ALERT_FORMAT, string];
-		}
-
-		//	payload : badge
+		//	done
 		
-		NSString *plBadge = nil;
+		[outputPayload release];
 		
-		if (buttonBadge.state == NSOnState)
-		{			
-			plBadge = [NSString stringWithFormat:JSON_BADGE_FORMAT, textFieldBadge.stringValue.intValue];
-		}
-
-		//	payload : sound
-		
-		NSString *plSound = nil;
-		
-		if (buttonSound.state == NSOnState)
-		{
-			NSString *string = textFieldSound.stringValue;
-			
-			//	TODO	sanitize
-			
-			plSound = [NSString stringWithFormat:JSON_SOUND_FORMAT, string];
-		}
-
-		//	payload
-		
-		NSMutableString *payloadAPS = [NSMutableString string];
-		
-		if (plAlert)
-		{
-			if (payloadAPS.length > 0)
-			{
-				[payloadAPS appendFormat:@",%@", plAlert];
-			}
-			else 
-			{
-				[payloadAPS appendFormat:@"%@", plAlert];
-			}
-		}
-
-		if (plBadge)
-		{
-			if (payloadAPS.length > 0)
-			{
-				[payloadAPS appendFormat:@",%@", plBadge];
-			}
-			else 
-			{
-				[payloadAPS appendFormat:@"%@", plBadge];
-			}
-		}
-
-		if (plSound)
-		{
-			if (payloadAPS.length > 0)
-			{
-				[payloadAPS appendFormat:@",%@", plSound];
-			}
-			else 
-			{
-				[payloadAPS appendFormat:@"%@", plSound];
-			}
-		}
-		
-		//	payload
-		
-		NSString *payload = [NSString stringWithFormat:JSON_FORMAT, payloadAPS];
-				
-		const char *payloadChar = [payload cStringUsingEncoding:NSUTF8StringEncoding];
-		
-		//	TODO	check size
-		
-		headerData[36] = strlen(payloadChar);
-				
-		//	data
-			
-		NSMutableData *data = [[NSMutableData alloc] init];
-		
-		[data appendBytes:headerData length:sizeof(headerData)];
-
-		[data appendBytes:payloadChar length:strlen(payloadChar)];
-		
-		[asyncSocket writeData:data withTimeout:10.0f tag:0];
-				
-		[data release];
-
+		[output release];
 	}
 }
 
@@ -872,7 +1039,45 @@
 
 - (IBAction)clickHelp:(NSButton *)aSender
 {
-	[[NSWorkspace sharedWorkspace] openURL:[NSURL URLWithString:HELP]];
+	NSString *urlString = [[NSUserDefaults standardUserDefaults] stringForKey:KEY_HELP_APNS];
+	
+	[[NSWorkspace sharedWorkspace] openURL:[NSURL URLWithString:urlString]];
+}
+
+//	--------------------------------------------------------------------------------------------------------------------
+//	method timerFired
+//	--------------------------------------------------------------------------------------------------------------------
+
+- (void)timerFired:(NSTimer *)aTimer
+{
+	if (aTimer == feedbackTimer)
+	{
+		if (!socketFeedback)
+		{	
+			NSLog(@"Socket FB : Connect");
+			
+			BOOL isSandbox = (self.buttonSandbox.state == NSOnState);
+			
+			NSString *host = isSandbox ? HOST_FB_DEVELOPMENT : HOST_FB_PRODUCTION;
+			
+			NSUInteger port = isSandbox ? PORT_FB_DEVELOPMENT : PORT_FB_PRODUCTION; 
+			
+			//	create socket
+			
+			socketFeedback = [[AsyncSocket alloc] initWithDelegate:self];
+			
+			if (![socketFeedback connectToHost:host onPort:port error:nil])
+			{
+				[socketFeedback disconnect];
+				
+				[socketFeedback release]; socketFeedback = nil;
+			}
+		}
+		
+		//	update status
+		
+		[self updateStatus];
+	}	
 }
 
 //	--------------------------------------------------------------------------------------------------------------------
@@ -880,7 +1085,21 @@
 //	--------------------------------------------------------------------------------------------------------------------
 
 - (void)onSocket:(AsyncSocket *)sock didConnectToHost:(NSString *)host port:(UInt16)port
-{
+{	
+	if (sock == socketGateway)
+	{
+		//	connection established
+		
+		NSLog(@"Socket GW : Connected : %@ : %d", host, port);
+	}	
+	
+	if (sock == socketFeedback)
+	{
+		//	connection established
+		
+		NSLog(@"Socket FB : Connected : %@ : %d", host, port);
+	}
+	
 	NSMutableDictionary *settings = [NSMutableDictionary dictionary];
 	
 	NSInteger index = [comboBoxCertificate indexOfSelectedItem];
@@ -905,14 +1124,98 @@
 }
 
 //	--------------------------------------------------------------------------------------------------------------------
+//	method onSocketDidSecure
+//	--------------------------------------------------------------------------------------------------------------------
+
+- (void)onSocketDidSecure:(AsyncSocket *)sock
+{
+	if (sock == socketGateway)
+	{
+		//	start reading
+		
+		[socketGateway readDataWithTimeout:DEFAULT_TIMEOUT tag:0];
+
+		//	start feedback timer
+		
+		feedbackTimer = [NSTimer scheduledTimerWithTimeInterval:60.0f 
+						 
+														 target:self 
+						 
+													   selector:@selector(timerFired:) 
+						 
+													   userInfo:nil 
+						 
+														repeats:YES];
+		
+		[self timerFired:feedbackTimer];
+		
+		//	connection established
+
+		NSLog(@"Socket GW : Secured");
+	}	
+	
+	if (sock == socketFeedback)
+	{		
+		//	start reading
+
+		[socketFeedback readDataWithTimeout:DEFAULT_TIMEOUT tag:0];
+
+		//	cleanup feedback timer
+		
+		[feedbackTimer invalidate]; feedbackTimer = nil;
+		
+		//	connection established
+
+		NSLog(@"Socket FB : Secured");
+	}
+}
+
+//	--------------------------------------------------------------------------------------------------------------------
+//	method onSocket didReadData
+//	--------------------------------------------------------------------------------------------------------------------
+
+- (void)onSocket:(AsyncSocket *)sock didReadData:(NSData *)data withTag:(long)tag
+{
+	if (sock == socketGateway)
+	{
+		[socketGateway readDataWithTimeout:DEFAULT_TIMEOUT tag:0];
+		
+		NSLog(@"Socket GW : Read");
+	}	
+
+	if (sock == socketFeedback)
+	{
+		[socketFeedback readDataWithTimeout:DEFAULT_TIMEOUT tag:0];
+		
+		NSLog(@"Socket FB : Read");
+	}	
+}
+
+//	--------------------------------------------------------------------------------------------------------------------
+//	method onSocket shouldTimeoutReadWithTag elapsed bytesDone
+//	--------------------------------------------------------------------------------------------------------------------
+
+- (NSTimeInterval)onSocket:(AsyncSocket *)sock
+
+  shouldTimeoutReadWithTag:(long)tag
+
+				   elapsed:(NSTimeInterval)elapsed
+
+				 bytesDone:(CFIndex)length
+{
+	return DEFAULT_TIMEOUT;
+}
+
+//	--------------------------------------------------------------------------------------------------------------------
 //	method onSocket willDisconnectWithError
 //	--------------------------------------------------------------------------------------------------------------------
 
 - (void)onSocket:(AsyncSocket *)sock willDisconnectWithError:(NSError *)err
 {
-	//	TODO	error message
-	
-//	NSLog(@"Socket : Will disconnect with error");
+	if (sock == socketGateway)
+	{
+		NSLog(@"Socket GW : Error : %@", err);
+	}	
 }
 
 //	--------------------------------------------------------------------------------------------------------------------
@@ -921,13 +1224,63 @@
 
 - (void)onSocketDidDisconnect:(AsyncSocket *)sock
 {
-	//	cleanup socket
+	//	cleanup socket gateway
 	
-	[asyncSocket setDelegate:nil];
+	if (sock == socketGateway)
+	{				
+		//	cleanup socket gateway
+		
+		[socketGateway setDelegate:nil];
+		
+		[socketGateway disconnect];
+		
+		[socketGateway release]; socketGateway = nil;
+
+		//	cleanup socket feedback
+		
+		[socketFeedback setDelegate:nil];
+		
+		[socketFeedback disconnect];
+		
+		[socketFeedback release]; socketFeedback = nil;
 	
-	[asyncSocket disconnect];
+		//	cleanup feedback timer
+		
+		[feedbackTimer invalidate]; feedbackTimer = nil;
+		
+		//	connection terminated
+		
+		NSLog(@"Socket GW : Terminated");
+	}
+
+	//	cleanup socket gateway
 	
-	[asyncSocket autorelease]; asyncSocket = nil;
+	if (sock == socketFeedback)
+	{		
+		//	cleanup socket feedback
+		
+		[socketFeedback setDelegate:nil];
+		
+		[socketFeedback disconnect];
+		
+		[socketFeedback release]; socketFeedback = nil;
+
+		//	start feedback timer
+		
+		feedbackTimer = [NSTimer scheduledTimerWithTimeInterval:60.0f 
+						 
+														 target:self 
+						 
+													   selector:@selector(timerFired:) 
+						 
+													   userInfo:nil 
+						 
+														repeats:YES];
+	
+		//	connection terminated
+		
+		NSLog(@"Socket FB : Terminated");
+	}
 	
 	//	update status
 	

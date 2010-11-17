@@ -1,56 +1,35 @@
 //	--------------------------------------------------------------------------------------------------------------------
 //
-//  GZECertificate.m
+//  GZEFormatAlert.m
 //  APNSTest
 //
-//  Created by Gerd Van Zegbroeck on 16/11/10.
+//  Created by Gerd Van Zegbroeck on 17/11/10.
 //  Copyright 2010 Managing Software. All rights reserved.
 //
 //	--------------------------------------------------------------------------------------------------------------------
 
-#import "GZECertificate.h"
+#import "GZEFormatAlert.h"
 
 
 //	--------------------------------------------------------------------------------------------------------------------
-//	class GZECertificate
+//	class GZEFormatAlert
 //	--------------------------------------------------------------------------------------------------------------------
 
-@implementation GZECertificate
+@implementation GZEFormatAlert
 
 //	--------------------------------------------------------------------------------------------------------------------
 //	property synthesizers
 //	--------------------------------------------------------------------------------------------------------------------
 
-@synthesize key;
-
-@synthesize name;
-
-@synthesize identity;
-
 //	--------------------------------------------------------------------------------------------------------------------
-//	method certificateWithName
+//	method init
 //	--------------------------------------------------------------------------------------------------------------------
 
-+ (id)certificateWithKey:(NSString *)aKey withName:(NSString *)aName withIdentity:(SecIdentityRef)aIdentity
-{
-	return [[[self alloc] initCertificateWithKey:aKey withName:aName withIdentity:aIdentity] autorelease];
-}
-
-//	--------------------------------------------------------------------------------------------------------------------
-//	method initCertificateWithName
-//	--------------------------------------------------------------------------------------------------------------------
-
-- (id)initCertificateWithKey:(NSString *)aKey withName:(NSString *)aName withIdentity:(SecIdentityRef)aIdentity
+- (id)init
 {
 	if (self = [super init])
 	{
-		key = [aKey copy];
-		
-		name = [aName copy];
-		
-		identity = aIdentity;
-		
-		CFRetain(identity);
+		//
 	}
 	
 	return self;
@@ -62,24 +41,58 @@
 
 - (void)dealloc
 {
-	[key release]; key = nil;
-	
-	[name release]; name = nil;
-	
-	CFRelease(identity); identity = nil;
-	
 	[super dealloc];
 }
 
 //	--------------------------------------------------------------------------------------------------------------------
-//	method description
+//	method stringForObjectValue
 //	--------------------------------------------------------------------------------------------------------------------
-
-- (NSString *)description
-{
-	return name;
+/*
+- (NSString *)stringForObjectValue:(id)anObject 
+{	
+    if (![anObject isKindOfClass:[NSNumber class]]) 
+	{
+        return nil;
+    }
+    
+	return [NSString stringWithFormat:@"$%.2f", [anObject  floatValue]];
 }
+*/
+//	--------------------------------------------------------------------------------------------------------------------
+//	method stringForObjectValue
+//	--------------------------------------------------------------------------------------------------------------------
+/*
+- (BOOL)getObjectValue:(id *)obj forString:(NSString *)string errorDescription:(NSString  **)error 
+{	     
+	BOOL returnValue = NO;
+	
+	NSScanner *scanner = [NSScanner scannerWithString: string];
+	
+    [scanner scanString: @"$" intoString: NULL];    //ignore  return value
+    
+	float floatResult;
 
+	if ([scanner scanFloat:&floatResult] && ([scanner isAtEnd])) 
+	{
+        returnValue = YES;
+		
+        if (obj)
+        {    
+			*obj = [NSNumber numberWithFloat:floatResult];
+		}
+		
+    } 
+	else 
+	{
+        if (error)
+		{
+            *error = NSLocalizedString(@"Couldn’t convert  to float", @"Error converting");
+		}
+    }
+	
+    return returnValue;
+}
+*/
 //	--------------------------------------------------------------------------------------------------------------------
 //	done
 //	--------------------------------------------------------------------------------------------------------------------

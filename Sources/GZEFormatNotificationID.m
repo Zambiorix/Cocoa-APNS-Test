@@ -1,56 +1,35 @@
 //	--------------------------------------------------------------------------------------------------------------------
 //
-//  GZECertificate.m
+//  GZEFormatNotificationID.m
 //  APNSTest
 //
-//  Created by Gerd Van Zegbroeck on 16/11/10.
+//  Created by Gerd Van Zegbroeck on 17/11/10.
 //  Copyright 2010 Managing Software. All rights reserved.
 //
 //	--------------------------------------------------------------------------------------------------------------------
 
-#import "GZECertificate.h"
+#import "GZEFormatNotificationID.h"
 
 
 //	--------------------------------------------------------------------------------------------------------------------
-//	class GZECertificate
+//	class GZEFormatNotificationID
 //	--------------------------------------------------------------------------------------------------------------------
 
-@implementation GZECertificate
+@implementation GZEFormatNotificationID
 
 //	--------------------------------------------------------------------------------------------------------------------
 //	property synthesizers
 //	--------------------------------------------------------------------------------------------------------------------
 
-@synthesize key;
-
-@synthesize name;
-
-@synthesize identity;
-
 //	--------------------------------------------------------------------------------------------------------------------
-//	method certificateWithName
+//	method init
 //	--------------------------------------------------------------------------------------------------------------------
 
-+ (id)certificateWithKey:(NSString *)aKey withName:(NSString *)aName withIdentity:(SecIdentityRef)aIdentity
-{
-	return [[[self alloc] initCertificateWithKey:aKey withName:aName withIdentity:aIdentity] autorelease];
-}
-
-//	--------------------------------------------------------------------------------------------------------------------
-//	method initCertificateWithName
-//	--------------------------------------------------------------------------------------------------------------------
-
-- (id)initCertificateWithKey:(NSString *)aKey withName:(NSString *)aName withIdentity:(SecIdentityRef)aIdentity
+- (id)init
 {
 	if (self = [super init])
 	{
-		key = [aKey copy];
-		
-		name = [aName copy];
-		
-		identity = aIdentity;
-		
-		CFRetain(identity);
+		//
 	}
 	
 	return self;
@@ -62,22 +41,7 @@
 
 - (void)dealloc
 {
-	[key release]; key = nil;
-	
-	[name release]; name = nil;
-	
-	CFRelease(identity); identity = nil;
-	
 	[super dealloc];
-}
-
-//	--------------------------------------------------------------------------------------------------------------------
-//	method description
-//	--------------------------------------------------------------------------------------------------------------------
-
-- (NSString *)description
-{
-	return name;
 }
 
 //	--------------------------------------------------------------------------------------------------------------------

@@ -14,6 +14,8 @@
 //	class references
 //	--------------------------------------------------------------------------------------------------------------------
 
+@class GZECertificate;
+
 @class AsyncSocket;
 
 //	--------------------------------------------------------------------------------------------------------------------
@@ -53,13 +55,23 @@
 
 	NSTextField *textFieldSound;
 
-	NSButton *buttonPost;
+	NSTextView *textViewOutput;
+	
+	NSButton *buttonSendNotification;
+	
+	NSTextField *textFieldFooter;
 
+	GZECertificate *currentCertificate;
+	
 	NSMutableArray *certificates;
 
 	NSMutableArray *notificationIDs;
 	
-	AsyncSocket *asyncSocket;
+	AsyncSocket *socketGateway;	
+
+	AsyncSocket *socketFeedback;	
+	
+	NSTimer *feedbackTimer;
 }
 
 //	--------------------------------------------------------------------------------------------------------------------
@@ -94,7 +106,11 @@
 
 @property (assign) IBOutlet NSTextField *textFieldSound;
 
-@property (assign) IBOutlet NSButton *buttonPost;
+@property (assign) IBOutlet NSTextView *textViewOutput;
+
+@property (assign) IBOutlet NSButton *buttonSendNotification;
+
+@property (assign) IBOutlet NSTextField *textFieldFooter;
 
 //	--------------------------------------------------------------------------------------------------------------------
 //	action prototypes
@@ -116,7 +132,7 @@
 
 - (IBAction)clickSound:(NSButton *)aSender;
 
-- (IBAction)clickPost:(NSButton *)aSender;
+- (IBAction)clickSendNotification:(NSButton *)aSender;
 
 - (IBAction)clickHelp:(NSButton *)aSender;
 

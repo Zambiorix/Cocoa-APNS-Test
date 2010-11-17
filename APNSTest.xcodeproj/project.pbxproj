@@ -8,6 +8,10 @@
 
 /* Begin PBXBuildFile section */
 		1DDD58160DA1D0A300B32029 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1DDD58140DA1D0A300B32029 /* MainMenu.xib */; };
+		433DF78D129421DA006C9BCB /* GZEFormatAlert.m in Sources */ = {isa = PBXBuildFile; fileRef = 433DF78C129421DA006C9BCB /* GZEFormatAlert.m */; };
+		433DF7B21294261A006C9BCB /* GZEFormatBadge.m in Sources */ = {isa = PBXBuildFile; fileRef = 433DF7B11294261A006C9BCB /* GZEFormatBadge.m */; };
+		433DF7B512942629006C9BCB /* GZEFormatSound.m in Sources */ = {isa = PBXBuildFile; fileRef = 433DF7B412942629006C9BCB /* GZEFormatSound.m */; };
+		433DF7B81294263F006C9BCB /* GZEFormatNotificationID.m in Sources */ = {isa = PBXBuildFile; fileRef = 433DF7B71294263F006C9BCB /* GZEFormatNotificationID.m */; };
 		43601C271292DF3000D73245 /* GZEApplication.m in Sources */ = {isa = PBXBuildFile; fileRef = 43601C251292DF3000D73245 /* GZEApplication.m */; };
 		43601C281292DF3000D73245 /* Main.m in Sources */ = {isa = PBXBuildFile; fileRef = 43601C261292DF3000D73245 /* Main.m */; };
 		43601C361292E0AA00D73245 /* Icon.icns in Resources */ = {isa = PBXBuildFile; fileRef = 43601C351292E0AA00D73245 /* Icon.icns */; };
@@ -17,6 +21,7 @@
 		43C2A06D1294095E005FD20D /* Play.png in Resources */ = {isa = PBXBuildFile; fileRef = 43C2A06B1294095E005FD20D /* Play.png */; };
 		43C2A06E1294095E005FD20D /* Stop.png in Resources */ = {isa = PBXBuildFile; fileRef = 43C2A06C1294095E005FD20D /* Stop.png */; };
 		43D4269412932D100042C41C /* GZECertificate.m in Sources */ = {isa = PBXBuildFile; fileRef = 43D4269312932D100042C41C /* GZECertificate.m */; };
+		43E00C44129495890080AA07 /* README in Resources */ = {isa = PBXBuildFile; fileRef = 43E00C43129495890080AA07 /* README */; };
 		8D11072B0486CEB800E47090 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C165CFE840E0CC02AAC07 /* InfoPlist.strings */; };
 		8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
 /* End PBXBuildFile section */
@@ -28,6 +33,14 @@
 		1DDD58150DA1D0A300B32029 /* MainMenu.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = MainMenu.xib; path = ../English.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		29B97324FDCFA39411CA2CEA /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
 		29B97325FDCFA39411CA2CEA /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
+		433DF78B129421DA006C9BCB /* GZEFormatAlert.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GZEFormatAlert.h; sourceTree = "<group>"; };
+		433DF78C129421DA006C9BCB /* GZEFormatAlert.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GZEFormatAlert.m; sourceTree = "<group>"; };
+		433DF7B01294261A006C9BCB /* GZEFormatBadge.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GZEFormatBadge.h; sourceTree = "<group>"; };
+		433DF7B11294261A006C9BCB /* GZEFormatBadge.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GZEFormatBadge.m; sourceTree = "<group>"; };
+		433DF7B312942629006C9BCB /* GZEFormatSound.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GZEFormatSound.h; sourceTree = "<group>"; };
+		433DF7B412942629006C9BCB /* GZEFormatSound.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GZEFormatSound.m; sourceTree = "<group>"; };
+		433DF7B61294263F006C9BCB /* GZEFormatNotificationID.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GZEFormatNotificationID.h; sourceTree = "<group>"; };
+		433DF7B71294263F006C9BCB /* GZEFormatNotificationID.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GZEFormatNotificationID.m; sourceTree = "<group>"; };
 		43601C231292DF3000D73245 /* Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Prefix.pch; sourceTree = "<group>"; };
 		43601C241292DF3000D73245 /* GZEApplication.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GZEApplication.h; sourceTree = "<group>"; };
 		43601C251292DF3000D73245 /* GZEApplication.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GZEApplication.m; sourceTree = "<group>"; };
@@ -41,6 +54,7 @@
 		43C2A06C1294095E005FD20D /* Stop.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Stop.png; sourceTree = "<group>"; };
 		43D4269212932D100042C41C /* GZECertificate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GZECertificate.h; sourceTree = "<group>"; };
 		43D4269312932D100042C41C /* GZECertificate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GZECertificate.m; sourceTree = "<group>"; };
+		43E00C43129495890080AA07 /* README */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README; sourceTree = "<group>"; };
 		8D1107310486CEB800E47090 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		8D1107320486CEB800E47090 /* Apple Push Notification Test.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Apple Push Notification Test.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -88,6 +102,7 @@
 		29B97314FDCFA39411CA2CEA /* APNSTest */ = {
 			isa = PBXGroup;
 			children = (
+				43E00C42129495770080AA07 /* README */,
 				43601C221292DF3000D73245 /* Sources */,
 				29B97317FDCFA39411CA2CEA /* Resources */,
 				29B97323FDCFA39411CA2CEA /* Frameworks */,
@@ -173,6 +188,14 @@
 		43601C341292E03C00D73245 /* Application */ = {
 			isa = PBXGroup;
 			children = (
+				433DF7B61294263F006C9BCB /* GZEFormatNotificationID.h */,
+				433DF7B71294263F006C9BCB /* GZEFormatNotificationID.m */,
+				433DF78B129421DA006C9BCB /* GZEFormatAlert.h */,
+				433DF78C129421DA006C9BCB /* GZEFormatAlert.m */,
+				433DF7B01294261A006C9BCB /* GZEFormatBadge.h */,
+				433DF7B11294261A006C9BCB /* GZEFormatBadge.m */,
+				433DF7B312942629006C9BCB /* GZEFormatSound.h */,
+				433DF7B412942629006C9BCB /* GZEFormatSound.m */,
 				43D4269212932D100042C41C /* GZECertificate.h */,
 				43D4269312932D100042C41C /* GZECertificate.m */,
 				43601C241292DF3000D73245 /* GZEApplication.h */,
@@ -196,6 +219,14 @@
 				43A565FE1292FB5F00E59383 /* Defaults.plist */,
 			);
 			path = Defaults;
+			sourceTree = "<group>";
+		};
+		43E00C42129495770080AA07 /* README */ = {
+			isa = PBXGroup;
+			children = (
+				43E00C43129495890080AA07 /* README */,
+			);
+			name = README;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -254,6 +285,7 @@
 				43A565FF1292FB5F00E59383 /* Defaults.plist in Resources */,
 				43C2A06D1294095E005FD20D /* Play.png in Resources */,
 				43C2A06E1294095E005FD20D /* Stop.png in Resources */,
+				43E00C44129495890080AA07 /* README in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -268,6 +300,10 @@
 				43601C281292DF3000D73245 /* Main.m in Sources */,
 				43A563F01292E33800E59383 /* AsyncSocket.m in Sources */,
 				43D4269412932D100042C41C /* GZECertificate.m in Sources */,
+				433DF78D129421DA006C9BCB /* GZEFormatAlert.m in Sources */,
+				433DF7B21294261A006C9BCB /* GZEFormatBadge.m in Sources */,
+				433DF7B512942629006C9BCB /* GZEFormatSound.m in Sources */,
+				433DF7B81294263F006C9BCB /* GZEFormatNotificationID.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -2,10 +2,10 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>kCertificate</key>
+	<string></string>
 	<key>kSandbox</key>
 	<true/>
-	<key>kNotificationIDs</key>
-	<array/>
 	<key>kAlertEnabled</key>
 	<true/>
 	<key>kAlert</key>
@@ -18,5 +18,7 @@
 	<true/>
 	<key>kSound</key>
 	<string>default</string>
+	<key>kHelpAPNS</key>
+	<string>http://developer.apple.com/library/ios/#documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG</string>
 </dict>
 </plist>
