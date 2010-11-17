@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>kSandbox</key>
+	<true/>
+	<key>kNotificationIDs</key>
+	<array/>
+	<key>kAlertEnabled</key>
+	<true/>
+	<key>kAlert</key>
+	<string>This is a test message</string>
+	<key>kBadgeEnabled</key>
+	<true/>
+	<key>kBadge</key>
+	<integer>0</integer>
+	<key>kSoundEnabled</key>
+	<true/>
+	<key>kSound</key>
+	<string>default</string>
+</dict>
+</plist>

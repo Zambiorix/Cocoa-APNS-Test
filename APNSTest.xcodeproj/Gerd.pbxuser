@@ -1,0 +1,216 @@
+// !$*UTF8*$!
+{
+	089C165DFE840E0CC02AAC07 /* InfoPlist.strings */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {825, 630}}";
+			sepNavSelRange = "{0, 0}";
+			sepNavVisRange = "{0, 45}";
+		};
+	};
+	29B97313FDCFA39411CA2CEA /* Project object */ = {
+		activeBuildConfigurationName = Debug;
+		activeExecutable = 43940C2911EE2015009C98CF /* APNSTest */;
+		activeTarget = 8D1107260486CEB800E47090 /* APNSTest */;
+		addToTargets = (
+			8D1107260486CEB800E47090 /* APNSTest */,
+		);
+		codeSenseManager = 43940C3711EE2034009C98CF /* Code sense */;
+		executables = (
+			43940C2911EE2015009C98CF /* APNSTest */,
+		);
+		perUserDictionary = {
+			PBXConfiguration.PBXFileTableDataSource3.PBXFileTableDataSource = {
+				PBXFileTableDataSourceColumnSortingDirectionKey = "-1";
+				PBXFileTableDataSourceColumnSortingKey = PBXFileDataSource_Filename_ColumnID;
+				PBXFileTableDataSourceColumnWidthsKey = (
+					20,
+					1023,
+					20,
+					48,
+					43,
+					43,
+					20,
+				);
+				PBXFileTableDataSourceColumnsKey = (
+					PBXFileDataSource_FiletypeID,
+					PBXFileDataSource_Filename_ColumnID,
+					PBXFileDataSource_Built_ColumnID,
+					PBXFileDataSource_ObjectSize_ColumnID,
+					PBXFileDataSource_Errors_ColumnID,
+					PBXFileDataSource_Warnings_ColumnID,
+					PBXFileDataSource_Target_ColumnID,
+				);
+			};
+			PBXConfiguration.PBXFileTableDataSource3.PBXFindDataSource = {
+				PBXFileTableDataSourceColumnSortingDirectionKey = "-1";
+				PBXFileTableDataSourceColumnSortingKey = PBXFindDataSource_LocationID;
+				PBXFileTableDataSourceColumnWidthsKey = (
+					200,
+					661,
+				);
+				PBXFileTableDataSourceColumnsKey = (
+					PBXFindDataSource_MessageID,
+					PBXFindDataSource_LocationID,
+				);
+			};
+			PBXConfiguration.PBXTargetDataSource.PBXTargetDataSource = {
+				PBXFileTableDataSourceColumnSortingDirectionKey = "-1";
+				PBXFileTableDataSourceColumnSortingKey = PBXFileDataSource_Filename_ColumnID;
+				PBXFileTableDataSourceColumnWidthsKey = (
+					20,
+					761,
+					60,
+					20,
+					48,
+					43,
+					43,
+				);
+				PBXFileTableDataSourceColumnsKey = (
+					PBXFileDataSource_FiletypeID,
+					PBXFileDataSource_Filename_ColumnID,
+					PBXTargetDataSource_PrimaryAttribute,
+					PBXFileDataSource_Built_ColumnID,
+					PBXFileDataSource_ObjectSize_ColumnID,
+					PBXFileDataSource_Errors_ColumnID,
+					PBXFileDataSource_Warnings_ColumnID,
+				);
+			};
+			PBXPerProjectTemplateStateSaveDate = 311692795;
+			PBXWorkspaceStateSaveDate = 311692795;
+		};
+		perUserProjectItems = {
+			433DF68112940DFD006C9BCB /* PBXTextBookmark */ = 433DF68112940DFD006C9BCB /* PBXTextBookmark */;
+			433DF69612940E05006C9BCB /* PBXTextBookmark */ = 433DF69612940E05006C9BCB /* PBXTextBookmark */;
+		};
+		sourceControlManager = 43940C3611EE2034009C98CF /* Source Control */;
+		userBuildSettings = {
+		};
+	};
+	433DF68112940DFD006C9BCB /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 43601C251292DF3000D73245 /* GZEApplication.m */;
+		name = "GZEApplication.m: 853";
+		rLen = 0;
+		rLoc = 25153;
+		rType = 0;
+		vrLen = 484;
+		vrLoc = 24923;
+	};
+	433DF69612940E05006C9BCB /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 43601C251292DF3000D73245 /* GZEApplication.m */;
+		name = "GZEApplication.m: 853";
+		rLen = 0;
+		rLoc = 25153;
+		rType = 0;
+		vrLen = 1528;
+		vrLoc = 24654;
+	};
+	43601C231292DF3000D73245 /* Prefix.pch */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {979, 630}}";
+			sepNavSelRange = "{0, 0}";
+			sepNavVisRange = "{0, 147}";
+		};
+	};
+	43601C241292DF3000D73245 /* GZEApplication.h */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {1560, 1547}}";
+			sepNavSelRange = "{3067, 0}";
+			sepNavVisRange = "{3276, 553}";
+		};
+	};
+	43601C251292DF3000D73245 /* GZEApplication.m */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {1560, 12337}}";
+			sepNavSelRange = "{25153, 0}";
+			sepNavVisRange = "{24923, 484}";
+			sepNavWindowFrame = "{{15, 213}, {920, 960}}";
+		};
+	};
+	43601C261292DF3000D73245 /* Main.m */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {979, 630}}";
+			sepNavSelRange = "{0, 0}";
+			sepNavVisRange = "{0, 261}";
+		};
+	};
+	43940C2911EE2015009C98CF /* APNSTest */ = {
+		isa = PBXExecutable;
+		activeArgIndices = (
+		);
+		argumentStrings = (
+		);
+		autoAttachOnCrash = 1;
+		breakpointsEnabled = 0;
+		configStateDict = {
+		};
+		customDataFormattersEnabled = 1;
+		dataTipCustomDataFormattersEnabled = 1;
+		dataTipShowTypeColumn = 1;
+		dataTipSortType = 0;
+		debuggerPlugin = GDBDebugging;
+		disassemblyDisplayState = 0;
+		dylibVariantSuffix = "";
+		enableDebugStr = 1;
+		environmentEntries = (
+		);
+		executableSystemSymbolLevel = 0;
+		executableUserSymbolLevel = 0;
+		libgmallocEnabled = 0;
+		name = APNSTest;
+		savedGlobals = {
+		};
+		showTypeColumn = 0;
+		sourceDirectories = (
+		);
+	};
+	43940C3611EE2034009C98CF /* Source Control */ = {
+		isa = PBXSourceControlManager;
+		fallbackIsa = XCSourceControlManager;
+		isSCMEnabled = 0;
+		scmConfiguration = {
+			repositoryNamesForRoots = {
+				"" = "";
+			};
+		};
+	};
+	43940C3711EE2034009C98CF /* Code sense */ = {
+		isa = PBXCodeSenseManager;
+		indexTemplatePath = "";
+	};
+	43A563EC1292E33800E59383 /* AsyncSocket.h */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {1201, 8125}}";
+			sepNavSelRange = "{24743, 0}";
+			sepNavVisRange = "{23909, 3290}";
+		};
+	};
+	43A563ED1292E33800E59383 /* AsyncSocket.m */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {979, 50141}}";
+			sepNavSelRange = "{106438, 28}";
+			sepNavVisRange = "{105830, 1367}";
+		};
+	};
+	43D4269212932D100042C41C /* GZECertificate.h */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {1201, 760}}";
+			sepNavSelRange = "{778, 8}";
+			sepNavVisRange = "{0, 1941}";
+		};
+	};
+	43D4269312932D100042C41C /* GZECertificate.m */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {1154, 1092}}";
+			sepNavSelRange = "{1892, 0}";
+			sepNavVisRange = "{1594, 369}";
+		};
+	};
+	8D1107260486CEB800E47090 /* APNSTest */ = {
+		activeExec = 0;
+		executables = (
+			43940C2911EE2015009C98CF /* APNSTest */,
+		);
+	};
+}
