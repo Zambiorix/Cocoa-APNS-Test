@@ -70,7 +70,7 @@
 
 #define JSON_SOUND_FORMAT			@"\"sound\":\"%@\""
 
-#define JSON_MAX_PAYLOAD			256
+#define JSON_MAX_PAYLOAD			255
 
 #define PAYLOAD_FORMAT				@"Payload size : %d / %d"
 
@@ -346,7 +346,7 @@
 		
 	[[textViewOutput textStorage] setAttributedString:[self buildFormattedPayload:payload]];
 		
-	textFieldFooter.stringValue = [NSString stringWithFormat:PAYLOAD_FORMAT, payload.length, JSON_MAX_PAYLOAD - 1];
+	textFieldFooter.stringValue = [NSString stringWithFormat:PAYLOAD_FORMAT, payload.length, JSON_MAX_PAYLOAD];
 }
 
 //	--------------------------------------------------------------------------------------------------------------------
@@ -448,6 +448,22 @@
 	
 	[tableViewNotificationIDs registerForDraggedTypes:[NSArray arrayWithObject:NSPasteboardTypeString]];
 	
+	//	initialize output attributes
+	
+	NSFont *font = [NSFont fontWithName:@"Menlo" size:13.0f];
+	
+	NSMutableParagraphStyle *style = [[[NSMutableParagraphStyle alloc] init] autorelease];
+	
+	style.lineBreakMode = NSLineBreakByCharWrapping;
+	
+	textViewOutputAttributes = [[NSDictionary alloc] initWithObjectsAndKeys:
+								
+								font, NSFontAttributeName,
+								
+								style, NSParagraphStyleAttributeName,
+								
+								nil];	
+	
 	//	update status
 	
 	[self updateStatus];
@@ -465,6 +481,10 @@
 
 - (void)applicationWillTerminate:(NSNotification *)aNotification
 {		
+	//	cleanup output attributes
+	
+	[textViewOutputAttributes release]; textViewOutputAttributes = nil;
+	
 	//	cleanup socket gateway
 	
 	[socketGateway setDelegate:nil];
@@ -721,6 +741,33 @@
 }
 
 //	--------------------------------------------------------------------------------------------------------------------
+//	method JSONString
+//	--------------------------------------------------------------------------------------------------------------------
+
+- (NSString *)JSONString:(NSString *)aString 
+{
+	NSMutableString *s = [NSMutableString stringWithString:aString];
+	
+	NSRange r = NSMakeRange(0, [s length]);
+	
+	[s replaceOccurrencesOfString:@"\""	withString:@"\\\""	options:NSCaseInsensitiveSearch range:r];
+		
+	[s replaceOccurrencesOfString:@"\n"	withString:@"\\n"	options:NSCaseInsensitiveSearch range:r];
+	
+	[s replaceOccurrencesOfString:@"\b"	withString:@"\\b"	options:NSCaseInsensitiveSearch range:r];
+	
+	[s replaceOccurrencesOfString:@"\f"	withString:@"\\f"	options:NSCaseInsensitiveSearch range:r];
+	
+	[s replaceOccurrencesOfString:@"\r"	withString:@"\\r"	options:NSCaseInsensitiveSearch range:r];
+	
+	[s replaceOccurrencesOfString:@"\t"	withString:@"\\t"	options:NSCaseInsensitiveSearch range:r];
+	
+	[s replaceOccurrencesOfString:@"/"	withString:@"\\/"	options:NSCaseInsensitiveSearch range:r];
+
+	return [NSString stringWithString:s];
+}
+
+//	--------------------------------------------------------------------------------------------------------------------
 //	method buildPayloadWithAlert withBadge withSound
 //	--------------------------------------------------------------------------------------------------------------------
 
@@ -732,7 +779,7 @@
 	
 	if (buttonAlert.state == NSOnState)
 	{
-		plAlert = [NSString stringWithFormat:JSON_ALERT_FORMAT, aAlert];
+		plAlert = [NSString stringWithFormat:JSON_ALERT_FORMAT,[self JSONString:aAlert]];
 	}
 	
 	//	payload : badge
@@ -750,7 +797,7 @@
 	
 	if (buttonSound.state == NSOnState)
 	{		
-		plSound = [NSString stringWithFormat:JSON_SOUND_FORMAT, aSound];
+		plSound = [NSString stringWithFormat:JSON_SOUND_FORMAT, [self JSONString:aSound]];
 	}
 	
 	//	payload
@@ -803,8 +850,8 @@
 //	--------------------------------------------------------------------------------------------------------------------
 
 - (NSAttributedString *)buildFormattedPayload:(NSString *)aPayload
-{
-	return [[[NSAttributedString alloc] initWithString:aPayload] autorelease];
+{			
+	return [[[NSAttributedString alloc] initWithString:aPayload attributes:textViewOutputAttributes] autorelease];
 }
 
 //	--------------------------------------------------------------------------------------------------------------------
@@ -863,12 +910,17 @@
 										  withBadge:textFieldBadge.stringValue 
 										  
 										  withSound:textFieldSound.stringValue];
-		
+
+	if (payload.length > JSON_MAX_PAYLOAD)
+	{		
+		return NO;
+	}
+	
 	[[textViewOutput textStorage] setAttributedString:[self buildFormattedPayload:payload]];
 	
-	textFieldFooter.stringValue = [NSString stringWithFormat:PAYLOAD_FORMAT, payload.length, JSON_MAX_PAYLOAD - 1];
-	
-	return (payload.length < JSON_MAX_PAYLOAD);
+	textFieldFooter.stringValue = [NSString stringWithFormat:PAYLOAD_FORMAT, payload.length, JSON_MAX_PAYLOAD];
+
+	return YES;
 }
 
 //	--------------------------------------------------------------------------------------------------------------------
@@ -883,11 +935,16 @@
 						 
 										  withSound:textFieldSound.stringValue];
 
+	if (payload.length > JSON_MAX_PAYLOAD)
+	{		
+		return NO;
+	}
+	
 	[[textViewOutput textStorage] setAttributedString:[self buildFormattedPayload:payload]];
 	
-	textFieldFooter.stringValue = [NSString stringWithFormat:PAYLOAD_FORMAT, payload.length, JSON_MAX_PAYLOAD - 1];
+	textFieldFooter.stringValue = [NSString stringWithFormat:PAYLOAD_FORMAT, payload.length, JSON_MAX_PAYLOAD];
 	
-	return (payload.length < JSON_MAX_PAYLOAD);
+	return YES;
 }
 
 //	--------------------------------------------------------------------------------------------------------------------
@@ -902,11 +959,16 @@
 						 
 										  withSound:aString];
 	
+	if (payload.length > JSON_MAX_PAYLOAD)
+	{		
+		return NO;
+	}
+	
 	[[textViewOutput textStorage] setAttributedString:[self buildFormattedPayload:payload]];
 	
-	textFieldFooter.stringValue = [NSString stringWithFormat:PAYLOAD_FORMAT, payload.length, JSON_MAX_PAYLOAD - 1];
+	textFieldFooter.stringValue = [NSString stringWithFormat:PAYLOAD_FORMAT, payload.length, JSON_MAX_PAYLOAD];
 	
-	return (payload.length < JSON_MAX_PAYLOAD);
+	return YES;
 }
 
 //	--------------------------------------------------------------------------------------------------------------------

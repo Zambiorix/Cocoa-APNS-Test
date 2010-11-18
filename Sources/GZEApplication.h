@@ -90,6 +90,8 @@
 	
 	NSTextField *textFieldFooter;
 
+	NSDictionary *textViewOutputAttributes;
+	
 	GZECertificate *currentCertificate;
 	
 	NSMutableArray *certificates;

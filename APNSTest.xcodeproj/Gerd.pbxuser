@@ -77,8 +77,13 @@
 					PBXFileDataSource_Warnings_ColumnID,
 				);
 			};
-			PBXPerProjectTemplateStateSaveDate = 311796682;
-			PBXWorkspaceStateSaveDate = 311796682;
+			PBXPerProjectTemplateStateSaveDate = 311812357;
+			PBXWorkspaceStateSaveDate = 311812357;
+		};
+		perUserProjectItems = {
+			43BA00651295EC750097071D /* PBXTextBookmark */ = 43BA00651295EC750097071D /* PBXTextBookmark */;
+			43BA00801295EDA30097071D /* PBXTextBookmark */ = 43BA00801295EDA30097071D /* PBXTextBookmark */;
+			43BA00841295EDB40097071D /* PBXTextBookmark */ = 43BA00841295EDB40097071D /* PBXTextBookmark */;
 		};
 		sourceControlManager = 43940C3611EE2034009C98CF /* Source Control */;
 		userBuildSettings = {
@@ -149,16 +154,16 @@
 	};
 	43601C241292DF3000D73245 /* GZEApplication.h */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1201, 2353}}";
-			sepNavSelRange = "{2074, 0}";
-			sepNavVisRange = "{716, 1601}";
+			sepNavIntBoundsRect = "{{0, 0}, {1201, 2366}}";
+			sepNavSelRange = "{2646, 0}";
+			sepNavVisRange = "{2115, 1228}";
 		};
 	};
 	43601C251292DF3000D73245 /* GZEApplication.m */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1560, 18876}}";
-			sepNavSelRange = "{10124, 0}";
-			sepNavVisRange = "{9860, 377}";
+			sepNavIntBoundsRect = "{{0, 0}, {1560, 19240}}";
+			sepNavSelRange = "{26087, 0}";
+			sepNavVisRange = "{25219, 157}";
 			sepNavWindowFrame = "{{15, 213}, {920, 960}}";
 		};
 	};
@@ -236,6 +241,36 @@
 			sepNavVisRange = "{105671, 1684}";
 		};
 	};
+	43BA00651295EC750097071D /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 43601C241292DF3000D73245 /* GZEApplication.h */;
+		name = "GZEApplication.h: 93";
+		rLen = 0;
+		rLoc = 2646;
+		rType = 0;
+		vrLen = 1228;
+		vrLoc = 2115;
+	};
+	43BA00801295EDA30097071D /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 43601C251292DF3000D73245 /* GZEApplication.m */;
+		name = "GZEApplication.m: 854";
+		rLen = 0;
+		rLoc = 26087;
+		rType = 0;
+		vrLen = 157;
+		vrLoc = 25219;
+	};
+	43BA00841295EDB40097071D /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 43601C251292DF3000D73245 /* GZEApplication.m */;
+		name = "GZEApplication.m: 854";
+		rLen = 0;
+		rLoc = 26087;
+		rType = 0;
+		vrLen = 1595;
+		vrLoc = 25219;
+	};
 	43D4269212932D100042C41C /* GZECertificate.h */ = {
 		uiCtxt = {
 			sepNavIntBoundsRect = "{{0, 0}, {1560, 1014}}";
@@ -253,8 +288,8 @@
 	43E00C43129495890080AA07 /* README */ = {
 		uiCtxt = {
 			sepNavIntBoundsRect = "{{0, 0}, {1201, 1417}}";
-			sepNavSelRange = "{2498, 0}";
-			sepNavVisRange = "{2444, 456}";
+			sepNavSelRange = "{2572, 0}";
+			sepNavVisRange = "{2212, 1563}";
 		};
 	};
 	8D1107260486CEB800E47090 /* APNSTest */ = {
