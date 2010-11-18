@@ -28,6 +28,14 @@
 
 #import <Cocoa/Cocoa.h>
 
+#import "GZEFormatNotificationID.h"
+
+#import "GZEFormatAlert.h"
+
+#import "GZEFormatBadge.h"
+
+#import "GZEFormatSound.h"
+
 //	--------------------------------------------------------------------------------------------------------------------
 //	class references
 //	--------------------------------------------------------------------------------------------------------------------
@@ -40,7 +48,10 @@
 //	class GZEApplication
 //	--------------------------------------------------------------------------------------------------------------------
 
-@interface GZEApplication : NSObject <NSApplicationDelegate> 
+@interface GZEApplication : NSObject 
+<
+	NSApplicationDelegate, GZEFormatAlertDelegate, GZEFormatBadgeDelegate, GZEFormatSoundDelegate
+> 
 {
 
 @private

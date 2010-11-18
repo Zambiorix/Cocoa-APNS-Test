@@ -28,7 +28,6 @@
 
 #import "GZEFormatAlert.h"
 
-
 //	--------------------------------------------------------------------------------------------------------------------
 //	class GZEFormatAlert
 //	--------------------------------------------------------------------------------------------------------------------
@@ -39,78 +38,60 @@
 //	property synthesizers
 //	--------------------------------------------------------------------------------------------------------------------
 
+@synthesize delegate;
+
 //	--------------------------------------------------------------------------------------------------------------------
-//	method init
+//	method stringForObjectValue
 //	--------------------------------------------------------------------------------------------------------------------
 
-- (id)init
-{
-	if (self = [super init])
+- (NSString *)stringForObjectValue:(id)aObject 
+{ 
+	return [aObject description];
+} 
+
+//	--------------------------------------------------------------------------------------------------------------------
+//	method getObjectValue forString errorDescription
+//	--------------------------------------------------------------------------------------------------------------------
+
+- (BOOL)getObjectValue:(id *)aObject 
+
+			 forString:(NSString *)aString 
+
+	  errorDescription:(NSString **)aError 
+{ 	
+	*aObject = aString;
+	
+	if (aError)
 	{
-		//
+		*aError = nil;
 	}
 	
-	return self;
-}
+	return YES;	
+} 
 
 //	--------------------------------------------------------------------------------------------------------------------
-//	method dealloc
+//	method isPartialStringValid newEditingString errorDescription
 //	--------------------------------------------------------------------------------------------------------------------
 
-- (void)dealloc
-{
-	[super dealloc];
-}
+- (BOOL)isPartialStringValid:(NSString *)aPartialString 
 
-//	--------------------------------------------------------------------------------------------------------------------
-//	method stringForObjectValue
-//	--------------------------------------------------------------------------------------------------------------------
-/*
-- (NSString *)stringForObjectValue:(id)anObject 
+			newEditingString:(NSString **)aNewString 
+
+			errorDescription:(NSString **)aError
 {	
-    if (![anObject isKindOfClass:[NSNumber class]]) 
+	if (aError)
 	{
-        return nil;
-    }
-    
-	return [NSString stringWithFormat:@"$%.2f", [anObject  floatValue]];
+		*aError = nil;
+	}
+	
+	if (delegate)
+	{
+		return [delegate formatAlertCheck:self forString:aPartialString];
+	}
+	
+	return YES; 
 }
-*/
-//	--------------------------------------------------------------------------------------------------------------------
-//	method stringForObjectValue
-//	--------------------------------------------------------------------------------------------------------------------
-/*
-- (BOOL)getObjectValue:(id *)obj forString:(NSString *)string errorDescription:(NSString  **)error 
-{	     
-	BOOL returnValue = NO;
-	
-	NSScanner *scanner = [NSScanner scannerWithString: string];
-	
-    [scanner scanString: @"$" intoString: NULL];    //ignore  return value
-    
-	float floatResult;
 
-	if ([scanner scanFloat:&floatResult] && ([scanner isAtEnd])) 
-	{
-        returnValue = YES;
-		
-        if (obj)
-        {    
-			*obj = [NSNumber numberWithFloat:floatResult];
-		}
-		
-    } 
-	else 
-	{
-        if (error)
-		{
-            *error = NSLocalizedString(@"Couldn’t convert  to float", @"Error converting");
-		}
-    }
-	
-    return returnValue;
-}
-*/
 //	--------------------------------------------------------------------------------------------------------------------
 //	done
 //	--------------------------------------------------------------------------------------------------------------------

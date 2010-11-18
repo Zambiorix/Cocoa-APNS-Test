@@ -27,32 +27,27 @@
 //
 //	---------------------------------------------------------------------------------------------------------------
 //
-//	WARNING:
-//	
-//	Input sanitizing is not in place yet, only enter small alert strings and make sure you enter a 64 char hex 
-//	string as notification ID.
-//
 //	TODO
 //	
-//	1. input sanitizing and formatters
-//	2. logger
-//	3. feedback service
-//	4. other?
+//		1. logger
+//		2. feedback service
+//		3. getting push notification id's from a file, website, webservice ...
+//		4. other?
 //
 //	---------------------------------------------------------------------------------------------------------------
-//	implement this on iPhone / iPad, in your app delegate
+//	Implement the code below on iPhone / iPad, in your application delegate.
 //
-//	make sure your app id is enabled for push notification, and all certificates are in place on your development 
-//	machine. To do so, you can find all information below:
+//	Make sure your app id is enabled for push notification, and all certificates are in place on your development 
+//	machine. To do so, you can find all information on the website below:
 //
-//	http://developer.apple.com/library/ios/#documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG
+//		http://developer.apple.com/library/ios/#documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG
 //
-//	run the app on your device (simulator does not support push notification, and check the debug log for the 
-//	device's notification id. Enter this ID in the APNS test app and have a spin
+//	Run the app on your device (simulator does not support push notification, and check the debug log for the 
+//	device's notification id. Enter this ID in the APNS test app and have a spin.
 //	
-//	example:
+//	Example:
 //
-//	Notification Id : 5504151994cec69508ff5b517cc99bb06b19537ca4dfec7d9978531208c8488b
+//		Notification Id : 5504151994cec69508ff5b517cc99bb06b19537ca4dfec7d9978531208c8488b
 //	
 //	---------------------------------------------------------------------------------------------------------------
 
@@ -71,46 +66,44 @@
 	//	do other stuff ...
 }
 
-+ (NSString *)stringFromHexBytes:(NSData *)aData
++ (NSString *)hexStringFromBytes:(NSData *)aData
 {
-	static const char hexdigits[] = "0123456789abcdef";
+	static const char hexDigits[] = "0123456789abcdef";
 	
-	const size_t numBytes = [aData length];
+	const unsigned char *byteBuffer = [aData bytes];
+
+	NSUInteger byteCount = [aData length];
+		
+	char *stringBuffer = (char *)malloc(byteCount * 2 + 1);
 	
-	const unsigned char *bytes = [aData bytes];
-	
-	char *strbuf = (char *)malloc(numBytes * 2 + 1);
-	
-	char *hex = strbuf;
-	
-	NSString *hexBytes = nil;
-	
-	for (int i = 0; i < numBytes; ++i) 
+	char *hexChar = stringBuffer;
+		
+	while (byteCount-- > 0) 
 	{
-		const unsigned char c = *bytes++;
+		const unsigned char c = *byteBuffer++;
 		
-		*hex++ = hexdigits[(c >> 4) & 0xF];
+		*hexChar++ = hexDigits[(c >> 4) & 0xF];
 		
-		*hex++ = hexdigits[(c ) & 0xF];
+		*hexChar++ = hexDigits[(c >> 0) & 0xF];
 	}
 	
-	*hex = 0;
+	*hexChar = 0;
 	
-	hexBytes = [NSString stringWithUTF8String:strbuf];
+	NSString *hexBytes = [NSString stringWithUTF8String:stringBuffer];
 	
-	free(strbuf);
+	free(stringBuffer);
 	
 	return hexBytes;
 }
 
 - (void)application:(UIApplication *)app didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)devToken 
 { 	
-	NSLog(@"Notification Id : %@", [self stringFromHexBytes:devToken]);
+	NSLog(@"Notification Id : %@", [self hexStringFromBytes:devToken]);
 }
 
 - (void)application:(UIApplication *)application didFailToRegisterForRemoteNotificationsWithError:(NSError *)error
 {
-	NSLog(@"Failed to get Notification : %@", error);
+	NSLog(@"Failed to register for Push Notifications : %@", error);
 }
 
 //	---------------------------------------------------------------------------------------------------------------

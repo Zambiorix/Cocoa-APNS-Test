@@ -28,7 +28,6 @@
 
 #import "GZEFormatBadge.h"
 
-
 //	--------------------------------------------------------------------------------------------------------------------
 //	class GZEFormatBadge
 //	--------------------------------------------------------------------------------------------------------------------
@@ -39,27 +38,63 @@
 //	property synthesizers
 //	--------------------------------------------------------------------------------------------------------------------
 
+@synthesize delegate;
+
 //	--------------------------------------------------------------------------------------------------------------------
-//	method init
+//	method isPartialStringValid newEditingString errorDescription
 //	--------------------------------------------------------------------------------------------------------------------
 
-- (id)init
+- (BOOL)isPartialStringValid:(NSString *)aPartialString 
+			
+			newEditingString:(NSString **)aNewString 
+			
+			errorDescription:(NSString **)aError
 {
-	if (self = [super init])
+	BOOL result = [super isPartialStringValid:aPartialString newEditingString:aNewString errorDescription:aError];
+	
+	if (result)
 	{
-		//
+		aPartialString = [aPartialString stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+
+		NSScanner *scanner = [NSScanner scannerWithString:aPartialString];
+		
+		NSInteger value = 0;
+
+		result = [scanner scanInteger:&value];
+		
+		if (result)
+		{
+			if ([scanner isAtEnd])
+			{
+				if (value < 0) 
+				{
+					result = NO;
+				}
+				
+				if (value > 999) 
+				{
+					result = NO;
+				}
+			}
+			else 
+			{
+				result = NO;
+			}			
+		}
+		else 
+		{
+			result = (aPartialString.length == 0);
+		}
+	}
+
+	if (result && delegate)
+	{
+		NSUInteger value = [aPartialString intValue];
+		
+		return [delegate formatBadgeCheck:self forString:[NSString stringWithFormat:@"%d", value]];
 	}
 	
-	return self;
-}
-
-//	--------------------------------------------------------------------------------------------------------------------
-//	method dealloc
-//	--------------------------------------------------------------------------------------------------------------------
-
-- (void)dealloc
-{
-	[super dealloc];
+	return result;
 }
 
 //	--------------------------------------------------------------------------------------------------------------------

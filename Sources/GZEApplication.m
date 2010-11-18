@@ -58,7 +58,7 @@
 
 #define DEFAULT_TIMEOUT				10.0f
 
-#define DEFAULT_NOTIFICATION_ID		@"0000000000000000000000000000000000000000000000000000000000000000"
+#define DEFAULT_NOTIFICATION_ID		@"00000000-00000000-00000000-00000000-00000000-00000000-00000000-00000000"
 
 #define DEFAULT_NOTIFICATION_NAME	@"?"
 
@@ -69,6 +69,10 @@
 #define JSON_BADGE_FORMAT			@"\"badge\":%d"
 
 #define JSON_SOUND_FORMAT			@"\"sound\":\"%@\""
+
+#define JSON_MAX_PAYLOAD			256
+
+#define PAYLOAD_FORMAT				@"Payload size : %d / %d"
 
 //	--------------------------------------------------------------------------------------------------------------------
 //	defines
@@ -97,6 +101,18 @@
 #define KEY_SOUND					@"kSound"
 
 #define KEY_HELP_APNS				@"kHelpAPNS"
+
+//	--------------------------------------------------------------------------------------------------------------------
+//	class GZEApplication
+//	--------------------------------------------------------------------------------------------------------------------
+
+@interface GZEApplication (Private)
+
+- (NSString *)buildPayloadWithAlert:(NSString *)aAlert withBadge:(NSString *)aBadge withSound:(NSString *)aSound;
+
+- (NSAttributedString *)buildFormattedPayload:(NSString *)aPayload;
+
+@end
 
 //	--------------------------------------------------------------------------------------------------------------------
 //	class GZEApplication
@@ -321,6 +337,16 @@
 	[textFieldSound setEnabled:(buttonSound.state == NSOnState)];
 
 	[buttonSendNotification setEnabled:!hasNoSocket && hasNotificationIDsToSend];
+
+	NSString *payload = [self buildPayloadWithAlert:textFieldAlert.stringValue 
+						 
+										  withBadge:textFieldBadge.stringValue 
+						 
+										  withSound:textFieldSound.stringValue];
+		
+	[[textViewOutput textStorage] setAttributedString:[self buildFormattedPayload:payload]];
+		
+	textFieldFooter.stringValue = [NSString stringWithFormat:PAYLOAD_FORMAT, payload.length, JSON_MAX_PAYLOAD - 1];
 }
 
 //	--------------------------------------------------------------------------------------------------------------------
@@ -562,7 +588,15 @@
 //	--------------------------------------------------------------------------------------------------------------------
 
 - (void)tableView:(NSTableView *)tableView setObjectValue:(id)value forTableColumn:(NSTableColumn *)column row:(NSInteger)row 
-{          
+{ 	
+	if ([[column identifier] isEqualToString:KEY_NOTIFICATION_ID])
+	{		
+		if ([value isKindOfClass:[NSString class]])
+		{
+			value = [GZEFormatNotificationID arrayForString:value];
+		}
+	}
+		
 	[[notificationIDs objectAtIndex:row] setObject:value forKey:[column identifier]];
 
 	[[NSUserDefaults standardUserDefaults] setObject:notificationIDs forKey:currentCertificate.key];
@@ -614,13 +648,15 @@
 	
     NSString *dropped = [pboard stringForType:NSPasteboardTypeString];
 		
+	NSArray *array = [GZEFormatNotificationID arrayForString:dropped];
+			
 	switch (operation) 
 	{
 		case NSTableViewDropOn:
 		{
 			NSMutableDictionary *data = [notificationIDs objectAtIndex:row];
 			
-			[data setObject:dropped forKey:KEY_NOTIFICATION_ID];
+			[data setObject:array forKey:KEY_NOTIFICATION_ID];
 			
 			NSIndexSet *indexes = [NSIndexSet indexSetWithIndex:row];
 			
@@ -641,7 +677,7 @@
 										 
 										 DEFAULT_NOTIFICATION_NAME,			KEY_NAME,
 										 
-										 dropped,							KEY_NOTIFICATION_ID,
+										 array,								KEY_NOTIFICATION_ID,
 										 
 										 nil];
 			
@@ -672,35 +708,23 @@
 //	method buildNotificationID onLocation
 //	--------------------------------------------------------------------------------------------------------------------
 
-- (NSUInteger)buildNotificationID:(NSString *)aNotificationID onLocation:(char *)aLocation
+- (NSUInteger)buildNotificationID:(NSArray *)aNotificationID onLocation:(unsigned int *)aLocation
 {	
-	const char *hexChars = [aNotificationID UTF8String];
-	
-	const char *nextHex = hexChars;
-	
-	NSUInteger count = 0;
-	
-	//	TODO	check
-	
-	while (count < 32 && (count < strlen(hexChars)))
+	for (NSUInteger index = 0; index < 8; index++)
 	{
-		sscanf(nextHex, "%2x", (unsigned int *)aLocation);
+		NSNumber *number = [aNotificationID objectAtIndex:index];
 		
-		nextHex += 2;
-		
-		aLocation++;
-		
-		count++;
+		aLocation[index] = NSSwapInt([number intValue]);		
 	}
-	
+			
 	return 32;
 }
 
 //	--------------------------------------------------------------------------------------------------------------------
-//	method buildPayload
+//	method buildPayloadWithAlert withBadge withSound
 //	--------------------------------------------------------------------------------------------------------------------
 
-- (NSUInteger)buildPayload:(NSMutableData *)aData
+- (NSString *)buildPayloadWithAlert:(NSString *)aAlert withBadge:(NSString *)aBadge withSound:(NSString *)aSound
 {
 	//	payload : alert
 	
@@ -708,11 +732,7 @@
 	
 	if (buttonAlert.state == NSOnState)
 	{
-		NSString *string = textFieldAlert.stringValue;
-		
-		//	TODO	sanitize
-		
-		plAlert = [NSString stringWithFormat:JSON_ALERT_FORMAT, string];
+		plAlert = [NSString stringWithFormat:JSON_ALERT_FORMAT, aAlert];
 	}
 	
 	//	payload : badge
@@ -721,7 +741,7 @@
 	
 	if (buttonBadge.state == NSOnState)
 	{			
-		plBadge = [NSString stringWithFormat:JSON_BADGE_FORMAT, textFieldBadge.stringValue.intValue];
+		plBadge = [NSString stringWithFormat:JSON_BADGE_FORMAT, aBadge.intValue];
 	}
 	
 	//	payload : sound
@@ -729,12 +749,8 @@
 	NSString *plSound = nil;
 	
 	if (buttonSound.state == NSOnState)
-	{
-		NSString *string = textFieldSound.stringValue;
-		
-		//	TODO	sanitize
-		
-		plSound = [NSString stringWithFormat:JSON_SOUND_FORMAT, string];
+	{		
+		plSound = [NSString stringWithFormat:JSON_SOUND_FORMAT, aSound];
 	}
 	
 	//	payload
@@ -778,6 +794,30 @@
 	}
 	
 	NSString *payload = [NSString stringWithFormat:JSON_FORMAT, payloadAPS];
+
+	return payload;
+}
+
+//	--------------------------------------------------------------------------------------------------------------------
+//	method buildFormattedPayload
+//	--------------------------------------------------------------------------------------------------------------------
+
+- (NSAttributedString *)buildFormattedPayload:(NSString *)aPayload
+{
+	return [[[NSAttributedString alloc] initWithString:aPayload] autorelease];
+}
+
+//	--------------------------------------------------------------------------------------------------------------------
+//	method buildPayload
+//	--------------------------------------------------------------------------------------------------------------------
+
+- (NSUInteger)buildPayload:(NSMutableData *)aData
+{	
+	NSString *payload = [self buildPayloadWithAlert:textFieldAlert.stringValue 
+						 
+										  withBadge:textFieldBadge.stringValue 
+						 
+										  withSound:textFieldSound.stringValue];
 	
 	const char *payloadChar = [payload cStringUsingEncoding:NSUTF8StringEncoding];
 	
@@ -810,6 +850,63 @@
 	}
 	
 	return YES;
+}
+
+//	--------------------------------------------------------------------------------------------------------------------
+//	method formatAlertCheck forString
+//	--------------------------------------------------------------------------------------------------------------------
+
+- (BOOL)formatAlertCheck:(GZEFormatAlert *)aAlert forString:(NSString *)aString
+{	
+	NSString *payload = [self buildPayloadWithAlert:aString 
+										  
+										  withBadge:textFieldBadge.stringValue 
+										  
+										  withSound:textFieldSound.stringValue];
+		
+	[[textViewOutput textStorage] setAttributedString:[self buildFormattedPayload:payload]];
+	
+	textFieldFooter.stringValue = [NSString stringWithFormat:PAYLOAD_FORMAT, payload.length, JSON_MAX_PAYLOAD - 1];
+	
+	return (payload.length < JSON_MAX_PAYLOAD);
+}
+
+//	--------------------------------------------------------------------------------------------------------------------
+//	method formatBadgeCheck forString
+//	--------------------------------------------------------------------------------------------------------------------
+
+- (BOOL)formatBadgeCheck:(GZEFormatBadge *)aBadge forString:(NSString *)aString
+{
+	NSString *payload = [self buildPayloadWithAlert:textFieldAlert.stringValue 
+						 
+										  withBadge:aString 
+						 
+										  withSound:textFieldSound.stringValue];
+
+	[[textViewOutput textStorage] setAttributedString:[self buildFormattedPayload:payload]];
+	
+	textFieldFooter.stringValue = [NSString stringWithFormat:PAYLOAD_FORMAT, payload.length, JSON_MAX_PAYLOAD - 1];
+	
+	return (payload.length < JSON_MAX_PAYLOAD);
+}
+
+//	--------------------------------------------------------------------------------------------------------------------
+//	method formatSoundCheck forString
+//	--------------------------------------------------------------------------------------------------------------------
+
+- (BOOL)formatSoundCheck:(GZEFormatSound *)aSound forString:(NSString *)aString
+{
+	NSString *payload = [self buildPayloadWithAlert:textFieldSound.stringValue 
+						 
+										  withBadge:textFieldBadge.stringValue 
+						 
+										  withSound:aString];
+	
+	[[textViewOutput textStorage] setAttributedString:[self buildFormattedPayload:payload]];
+	
+	textFieldFooter.stringValue = [NSString stringWithFormat:PAYLOAD_FORMAT, payload.length, JSON_MAX_PAYLOAD - 1];
+	
+	return (payload.length < JSON_MAX_PAYLOAD);
 }
 
 //	--------------------------------------------------------------------------------------------------------------------
@@ -1027,7 +1124,7 @@
 		
 		header[ 1] = 0;		//	fixed
 		
-		header[ 2] = [self buildNotificationID:[data objectForKey:KEY_NOTIFICATION_ID] onLocation:&header[3]];
+		header[ 2] = [self buildNotificationID:[data objectForKey:KEY_NOTIFICATION_ID] onLocation:(unsigned int *)&header[3]];
 						
 		header[35] = 0;		//	fixed
 		

@@ -77,8 +77,8 @@
 					PBXFileDataSource_Warnings_ColumnID,
 				);
 			};
-			PBXPerProjectTemplateStateSaveDate = 311765056;
-			PBXWorkspaceStateSaveDate = 311765056;
+			PBXPerProjectTemplateStateSaveDate = 311796682;
+			PBXWorkspaceStateSaveDate = 311796682;
 		};
 		sourceControlManager = 43940C3611EE2034009C98CF /* Source Control */;
 		userBuildSettings = {
@@ -86,58 +86,58 @@
 	};
 	433DF78B129421DA006C9BCB /* GZEFormatAlert.h */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1560, 702}}";
-			sepNavSelRange = "{1096, 0}";
-			sepNavVisRange = "{774, 786}";
+			sepNavIntBoundsRect = "{{0, 0}, {1560, 962}}";
+			sepNavSelRange = "{1936, 0}";
+			sepNavVisRange = "{1657, 430}";
 		};
 	};
 	433DF78C129421DA006C9BCB /* GZEFormatAlert.m */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1560, 1443}}";
-			sepNavSelRange = "{1096, 0}";
-			sepNavVisRange = "{840, 703}";
+			sepNavIntBoundsRect = "{{0, 0}, {1201, 1339}}";
+			sepNavSelRange = "{1831, 357}";
+			sepNavVisRange = "{1808, 1472}";
 		};
 	};
 	433DF7B01294261A006C9BCB /* GZEFormatBadge.h */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1560, 741}}";
-			sepNavSelRange = "{1096, 0}";
-			sepNavVisRange = "{774, 786}";
+			sepNavIntBoundsRect = "{{0, 0}, {1201, 936}}";
+			sepNavSelRange = "{2236, 17}";
+			sepNavVisRange = "{708, 2177}";
 		};
 	};
 	433DF7B11294261A006C9BCB /* GZEFormatBadge.m */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1560, 897}}";
-			sepNavSelRange = "{1096, 0}";
-			sepNavVisRange = "{840, 703}";
+			sepNavIntBoundsRect = "{{0, 0}, {1560, 1417}}";
+			sepNavSelRange = "{1830, 0}";
+			sepNavVisRange = "{2016, 403}";
 		};
 	};
 	433DF7B312942629006C9BCB /* GZEFormatSound.h */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1560, 741}}";
-			sepNavSelRange = "{1096, 0}";
-			sepNavVisRange = "{774, 786}";
+			sepNavIntBoundsRect = "{{0, 0}, {1560, 936}}";
+			sepNavSelRange = "{1936, 0}";
+			sepNavVisRange = "{1657, 430}";
 		};
 	};
 	433DF7B412942629006C9BCB /* GZEFormatSound.m */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1560, 897}}";
-			sepNavSelRange = "{1096, 0}";
-			sepNavVisRange = "{840, 703}";
+			sepNavIntBoundsRect = "{{0, 0}, {1560, 1430}}";
+			sepNavSelRange = "{3290, 0}";
+			sepNavVisRange = "{3131, 160}";
 		};
 	};
 	433DF7B61294263F006C9BCB /* GZEFormatNotificationID.h */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1201, 741}}";
-			sepNavSelRange = "{0, 1225}";
-			sepNavVisRange = "{0, 2498}";
+			sepNavIntBoundsRect = "{{0, 0}, {1201, 807}}";
+			sepNavSelRange = "{1587, 0}";
+			sepNavVisRange = "{0, 2330}";
 		};
 	};
 	433DF7B71294263F006C9BCB /* GZEFormatNotificationID.m */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1560, 897}}";
-			sepNavSelRange = "{1105, 0}";
-			sepNavVisRange = "{783, 795}";
+			sepNavIntBoundsRect = "{{0, 0}, {1560, 3718}}";
+			sepNavSelRange = "{8680, 0}";
+			sepNavVisRange = "{7703, 493}";
 		};
 	};
 	43601C231292DF3000D73245 /* Prefix.pch */ = {
@@ -149,16 +149,16 @@
 	};
 	43601C241292DF3000D73245 /* GZEApplication.h */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1560, 1989}}";
-			sepNavSelRange = "{1101, 0}";
-			sepNavVisRange = "{845, 707}";
+			sepNavIntBoundsRect = "{{0, 0}, {1201, 2353}}";
+			sepNavSelRange = "{2074, 0}";
+			sepNavVisRange = "{716, 1601}";
 		};
 	};
 	43601C251292DF3000D73245 /* GZEApplication.m */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1201, 16900}}";
-			sepNavSelRange = "{31603, 0}";
-			sepNavVisRange = "{30643, 1619}";
+			sepNavIntBoundsRect = "{{0, 0}, {1560, 18876}}";
+			sepNavSelRange = "{10124, 0}";
+			sepNavVisRange = "{9860, 377}";
 			sepNavWindowFrame = "{{15, 213}, {920, 960}}";
 		};
 	};
@@ -217,9 +217,9 @@
 	};
 	439DF1C81294972000D7B1F2 /* LICENCE */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1201, 8775}}";
+			sepNavIntBoundsRect = "{{0, 0}, {1201, 8801}}";
 			sepNavSelRange = "{0, 0}";
-			sepNavVisRange = "{0, 3341}";
+			sepNavVisRange = "{0, 2790}";
 		};
 	};
 	43A563EC1292E33800E59383 /* AsyncSocket.h */ = {
@@ -252,9 +252,9 @@
 	};
 	43E00C43129495890080AA07 /* README */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1560, 1287}}";
-			sepNavSelRange = "{340, 0}";
-			sepNavVisRange = "{120, 666}";
+			sepNavIntBoundsRect = "{{0, 0}, {1201, 1417}}";
+			sepNavSelRange = "{2498, 0}";
+			sepNavVisRange = "{2444, 456}";
 		};
 	};
 	8D1107260486CEB800E47090 /* APNSTest */ = {

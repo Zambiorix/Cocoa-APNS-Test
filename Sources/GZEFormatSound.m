@@ -28,7 +28,6 @@
 
 #import "GZEFormatSound.h"
 
-
 //	--------------------------------------------------------------------------------------------------------------------
 //	class GZEFormatSound
 //	--------------------------------------------------------------------------------------------------------------------
@@ -39,27 +38,60 @@
 //	property synthesizers
 //	--------------------------------------------------------------------------------------------------------------------
 
+@synthesize delegate;
+
 //	--------------------------------------------------------------------------------------------------------------------
-//	method init
+//	method stringForObjectValue
 //	--------------------------------------------------------------------------------------------------------------------
 
-- (id)init
-{
-	if (self = [super init])
+- (NSString *)stringForObjectValue:(id)aObject 
+{ 
+	return [aObject description];
+} 
+
+//	--------------------------------------------------------------------------------------------------------------------
+//	method getObjectValue forString errorDescription
+//	--------------------------------------------------------------------------------------------------------------------
+
+- (BOOL)getObjectValue:(id *)aObject 
+
+			 forString:(NSString *)aString 
+
+	  errorDescription:(NSString **)aError 
+{ 	
+	*aObject = aString;
+	
+	if (aError)
 	{
-		//
+		*aError = nil;
 	}
 	
-	return self;
-}
+	return YES;	
+} 
 
 //	--------------------------------------------------------------------------------------------------------------------
-//	method dealloc
+//	method isPartialStringValid newEditingString errorDescription
 //	--------------------------------------------------------------------------------------------------------------------
 
-- (void)dealloc
-{
-	[super dealloc];
+- (BOOL)isPartialStringValid:(NSString *)aPartialString 
+
+			newEditingString:(NSString **)aNewString 
+
+			errorDescription:(NSString **)aError
+{	
+	NSLog(@"Sound : changed");
+	
+	if (aError)
+	{
+		*aError = nil;
+	}
+	
+	if (delegate)
+	{
+		return [delegate formatSoundCheck:self forString:aPartialString];
+	}
+	
+	return YES; 
 }
 
 //	--------------------------------------------------------------------------------------------------------------------
