@@ -139,6 +139,7 @@
 			children = (
 				43A563E91292E31B00E59383 /* Socket */,
 				43601C291292DF3400D73245 /* Common */,
+				43E9FDDA1295229800E83D81 /* Formatters */,
 				43601C341292E03C00D73245 /* Application */,
 			);
 			path = Sources;
@@ -190,14 +191,6 @@
 		43601C341292E03C00D73245 /* Application */ = {
 			isa = PBXGroup;
 			children = (
-				433DF7B61294263F006C9BCB /* GZEFormatNotificationID.h */,
-				433DF7B71294263F006C9BCB /* GZEFormatNotificationID.m */,
-				433DF78B129421DA006C9BCB /* GZEFormatAlert.h */,
-				433DF78C129421DA006C9BCB /* GZEFormatAlert.m */,
-				433DF7B01294261A006C9BCB /* GZEFormatBadge.h */,
-				433DF7B11294261A006C9BCB /* GZEFormatBadge.m */,
-				433DF7B312942629006C9BCB /* GZEFormatSound.h */,
-				433DF7B412942629006C9BCB /* GZEFormatSound.m */,
 				43D4269212932D100042C41C /* GZECertificate.h */,
 				43D4269312932D100042C41C /* GZECertificate.m */,
 				43601C241292DF3000D73245 /* GZEApplication.h */,
@@ -230,6 +223,21 @@
 				439DF1C81294972000D7B1F2 /* LICENCE */,
 			);
 			name = README;
+			sourceTree = "<group>";
+		};
+		43E9FDDA1295229800E83D81 /* Formatters */ = {
+			isa = PBXGroup;
+			children = (
+				433DF7B61294263F006C9BCB /* GZEFormatNotificationID.h */,
+				433DF7B71294263F006C9BCB /* GZEFormatNotificationID.m */,
+				433DF78B129421DA006C9BCB /* GZEFormatAlert.h */,
+				433DF78C129421DA006C9BCB /* GZEFormatAlert.m */,
+				433DF7B01294261A006C9BCB /* GZEFormatBadge.h */,
+				433DF7B11294261A006C9BCB /* GZEFormatBadge.m */,
+				433DF7B312942629006C9BCB /* GZEFormatSound.h */,
+				433DF7B412942629006C9BCB /* GZEFormatSound.m */,
+			);
+			name = Formatters;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */

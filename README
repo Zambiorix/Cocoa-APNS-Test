@@ -1,1 +1,116 @@
-Will write some documentation soon.
+//	--------------------------------------------------------------------------------------------------------------------
+//
+//  APNSTest
+//
+//  Created by Gerd Van Zegbroeck on 16/11/10.
+//
+//	Apple Push Notification Test application, push notifications to your app from the desktop
+//
+//  Managing Software : http://www.managingsoftware.com
+//
+//	--------------------------------------------------------------------------------------------------------------------
+//
+//	This file is part of APNSTest - Apple Push Notification Test.
+//
+//	APNSTest is free software: you can redistribute it and/or modify
+//	it under the terms of the GNU General Public License as published by
+//	the Free Software Foundation, either version 3 of the License, or
+//	(at your option) any later version.
+//
+//	APNSTest is distributed in the hope that it will be useful,
+//	but WITHOUT ANY WARRANTY; without even the implied warranty of
+//	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//	GNU General Public License for more details.
+//
+//	You should have received a copy of the GNU General Public License
+//	along with APNSTest. If not, see <http://www.gnu.org/licenses/>.
+//
+//	--------------------------------------------------------------------------------------------------------------------
+//
+//	WARNING:
+//	
+//	Input sanitizing is not in place yet, only enter small alert strings and make sure you enter a 64 char hex string 
+//	as notification ID.
+//
+//	TODO
+//	
+//	1. input sanitizing and formatters
+//	2. logger
+//	3. feedback service
+//	4. other?
+//
+//	--------------------------------------------------------------------------------------------------------------------
+//	implement this on iPhone / iPad, in your app delegate
+//
+//	make sure your app id is enabled for push notification, and all certificates are in place on your development machine
+//	To do so, you can find all information below:
+//
+//	http://developer.apple.com/library/ios/#documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG
+//
+//	run the app on your device (simulator does not support push notification, and check the debug log for the device's
+//	notification id. Enter this ID in the APNS test app and have a spin
+//	
+//	example:
+//
+//	Notification Id : 5504151994cec69508ff5b517cc99bb06b19537ca4dfec7d9978531208c8488b
+//	
+//	--------------------------------------------------------------------------------------------------------------------
+
+- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions 
+{
+	//	do your stuff ...
+
+
+	//	enable push notification
+	
+	[[UIApplication sharedApplication] registerForRemoteNotificationTypes:
+	 
+	 UIRemoteNotificationTypeAlert | UIRemoteNotificationTypeBadge | UIRemoteNotificationTypeSound];
+
+
+	//	do other stuff ...
+}
+
++ (NSString *)stringFromHexBytes:(NSData *)aData
+{
+	static const char hexdigits[] = "0123456789abcdef";
+	
+	const size_t numBytes = [aData length];
+	
+	const unsigned char *bytes = [aData bytes];
+	
+	char *strbuf = (char *)malloc(numBytes * 2 + 1);
+	
+	char *hex = strbuf;
+	
+	NSString *hexBytes = nil;
+	
+	for (int i = 0; i < numBytes; ++i) 
+	{
+		const unsigned char c = *bytes++;
+		
+		*hex++ = hexdigits[(c >> 4) & 0xF];
+		
+		*hex++ = hexdigits[(c ) & 0xF];
+	}
+	
+	*hex = 0;
+	
+	hexBytes = [NSString stringWithUTF8String:strbuf];
+	
+	free(strbuf);
+	
+	return hexBytes;
+}
+
+- (void)application:(UIApplication *)app didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)devToken 
+{ 	
+	NSLog(@"Notification Id : %@", [self stringFromHexBytes:devToken]);
+}
+
+- (void)application:(UIApplication *)application didFailToRegisterForRemoteNotificationsWithError:(NSError *)error
+{
+	NSLog(@"Failed to get Notification : %@", error);
+}
+
+//	--------------------------------------------------------------------------------------------------------------------

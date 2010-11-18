@@ -1068,6 +1068,9 @@
 
 - (void)timerFired:(NSTimer *)aTimer
 {
+	//	TODO	debug feedback service
+	
+/*	
 	if (aTimer == feedbackTimer)
 	{
 		if (!socketFeedback)
@@ -1095,7 +1098,8 @@
 		//	update status
 		
 		[self updateStatus];
-	}	
+	}
+*/
 }
 
 //	--------------------------------------------------------------------------------------------------------------------
