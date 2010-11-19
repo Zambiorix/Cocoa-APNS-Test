@@ -219,8 +219,8 @@
 		43E00C42129495770080AA07 /* README */ = {
 			isa = PBXGroup;
 			children = (
-				43E00C43129495890080AA07 /* README */,
 				439DF1C81294972000D7B1F2 /* LICENCE */,
+				43E00C43129495890080AA07 /* README */,
 			);
 			name = README;
 			sourceTree = "<group>";

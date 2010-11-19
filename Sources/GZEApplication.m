@@ -58,6 +58,8 @@
 
 #define DEFAULT_TIMEOUT				10.0f
 
+#define DEFAULT_FEEDBACK_INTERVAL	600.0f
+
 #define DEFAULT_NOTIFICATION_ID		@"00000000-00000000-00000000-00000000-00000000-00000000-00000000-00000000"
 
 #define DEFAULT_NOTIFICATION_NAME	@"?"
@@ -72,7 +74,9 @@
 
 #define JSON_MAX_PAYLOAD			255
 
-#define PAYLOAD_FORMAT				@"Payload size : %d / %d"
+#define JSON_PAYLOAD_FORMAT			@"Payload size : %d / %d"
+
+#define FEEDBACK_PACKET_SIZE		38
 
 //	--------------------------------------------------------------------------------------------------------------------
 //	defines
@@ -155,6 +159,8 @@
 @synthesize textViewOutput;
 
 @synthesize buttonSendNotification;
+
+@synthesize buttonReceiveFeedback;
 
 @synthesize textFieldFooter;
 
@@ -296,8 +302,10 @@
 
 - (void)updateStatus
 {
-	BOOL hasNoSocket = (socketGateway == nil);
-			
+	BOOL hasNoGWSocket = (socketGateway == nil);
+
+	BOOL hasNoFBSocket = (socketFeedback == nil);
+
 	BOOL hasCertificate = ([comboBoxCertificate indexOfSelectedItem] >= 0);
 
 	BOOL hasNotificationIDs = (notificationIDs != nil);
@@ -316,13 +324,13 @@
 		}
 	}		
 	
-	[buttonConnect setEnabled:hasNoSocket && hasCertificate];
+	[buttonConnect setEnabled:hasNoGWSocket && hasCertificate];
 
-	[buttonDisconnect setEnabled:!hasNoSocket];
+	[buttonDisconnect setEnabled:!hasNoGWSocket];
 			
-	[comboBoxCertificate setEnabled:hasNoSocket];
+	[comboBoxCertificate setEnabled:hasNoGWSocket];
 
-	[buttonSandbox setEnabled:hasNoSocket];
+	[buttonSandbox setEnabled:hasNoGWSocket];
 
 	[tableViewNotificationIDs setEnabled:hasNotificationIDs];
 	
@@ -336,8 +344,10 @@
 
 	[textFieldSound setEnabled:(buttonSound.state == NSOnState)];
 
-	[buttonSendNotification setEnabled:!hasNoSocket && hasNotificationIDsToSend];
+	[buttonSendNotification setEnabled:!hasNoGWSocket && hasNotificationIDsToSend];
 
+	[buttonReceiveFeedback setEnabled:hasCertificate && !hasNoGWSocket && hasNoFBSocket];
+	
 	NSString *payload = [self buildPayloadWithAlert:textFieldAlert.stringValue 
 						 
 										  withBadge:textFieldBadge.stringValue 
@@ -346,7 +356,7 @@
 		
 	[[textViewOutput textStorage] setAttributedString:[self buildFormattedPayload:payload]];
 		
-	textFieldFooter.stringValue = [NSString stringWithFormat:PAYLOAD_FORMAT, payload.length, JSON_MAX_PAYLOAD];
+	textFieldFooter.stringValue = [NSString stringWithFormat:JSON_PAYLOAD_FORMAT, payload.length, JSON_MAX_PAYLOAD];
 }
 
 //	--------------------------------------------------------------------------------------------------------------------
@@ -646,9 +656,7 @@
 				 proposedRow:(NSInteger)row 
 	   
 	   proposedDropOperation:(NSTableViewDropOperation)operation
-{
-	//	TODO	validate input
-	
+{	
     return NSDragOperationEvery;
 }
 
@@ -738,6 +746,33 @@
 	}
 			
 	return 32;
+}
+
+//	--------------------------------------------------------------------------------------------------------------------
+//	method buildNotificationID onLocation
+//	--------------------------------------------------------------------------------------------------------------------
+
+- (NSString *)buildNotificationIDString:(NSArray *)aNotificationID
+{	
+	return [NSString stringWithFormat:@"%08x %08x %08x %08x %08x %08x %08x %08x", 
+
+			[[aNotificationID objectAtIndex:0] intValue],
+
+			[[aNotificationID objectAtIndex:1] intValue],
+			
+			[[aNotificationID objectAtIndex:2] intValue],
+			
+			[[aNotificationID objectAtIndex:3] intValue],
+			
+			[[aNotificationID objectAtIndex:4] intValue],
+			
+			[[aNotificationID objectAtIndex:5] intValue],
+			
+			[[aNotificationID objectAtIndex:6] intValue],
+			
+			[[aNotificationID objectAtIndex:7] intValue]
+			
+			];
 }
 
 //	--------------------------------------------------------------------------------------------------------------------
@@ -918,7 +953,7 @@
 	
 	[[textViewOutput textStorage] setAttributedString:[self buildFormattedPayload:payload]];
 	
-	textFieldFooter.stringValue = [NSString stringWithFormat:PAYLOAD_FORMAT, payload.length, JSON_MAX_PAYLOAD];
+	textFieldFooter.stringValue = [NSString stringWithFormat:JSON_PAYLOAD_FORMAT, payload.length, JSON_MAX_PAYLOAD];
 
 	return YES;
 }
@@ -942,7 +977,7 @@
 	
 	[[textViewOutput textStorage] setAttributedString:[self buildFormattedPayload:payload]];
 	
-	textFieldFooter.stringValue = [NSString stringWithFormat:PAYLOAD_FORMAT, payload.length, JSON_MAX_PAYLOAD];
+	textFieldFooter.stringValue = [NSString stringWithFormat:JSON_PAYLOAD_FORMAT, payload.length, JSON_MAX_PAYLOAD];
 	
 	return YES;
 }
@@ -966,9 +1001,45 @@
 	
 	[[textViewOutput textStorage] setAttributedString:[self buildFormattedPayload:payload]];
 	
-	textFieldFooter.stringValue = [NSString stringWithFormat:PAYLOAD_FORMAT, payload.length, JSON_MAX_PAYLOAD];
+	textFieldFooter.stringValue = [NSString stringWithFormat:JSON_PAYLOAD_FORMAT, payload.length, JSON_MAX_PAYLOAD];
 	
 	return YES;
+}
+
+//	--------------------------------------------------------------------------------------------------------------------
+//	method timerFired
+//	--------------------------------------------------------------------------------------------------------------------
+
+- (void)timerFired:(NSTimer *)aTimer
+{	
+	if (aTimer == feedbackTimer)
+	{
+		if (!socketFeedback)
+		{	
+			NSLog(@"Socket FB : Connect");
+			
+			BOOL isSandbox = (self.buttonSandbox.state == NSOnState);
+			
+			NSString *host = isSandbox ? HOST_FB_DEVELOPMENT : HOST_FB_PRODUCTION;
+			
+			NSUInteger port = isSandbox ? PORT_FB_DEVELOPMENT : PORT_FB_PRODUCTION; 
+			
+			//	create socket
+			
+			socketFeedback = [[AsyncSocket alloc] initWithDelegate:self];
+			
+			if (![socketFeedback connectToHost:host onPort:port error:nil])
+			{
+				[socketFeedback disconnect];
+				
+				[socketFeedback release]; socketFeedback = nil;
+			}
+		}
+		
+		//	update status
+		
+		[self updateStatus];
+	}
 }
 
 //	--------------------------------------------------------------------------------------------------------------------
@@ -1199,7 +1270,9 @@
 		[output appendData:outputPayload];
 		
 		//	send notification
-							
+
+		NSLog(@"Socket GW : Push to : %@", [self buildNotificationIDString:[data objectForKey:KEY_NOTIFICATION_ID]]);
+		
 		[socketGateway writeData:output withTimeout:DEFAULT_TIMEOUT tag:0];
 
 		//	done
@@ -1208,6 +1281,33 @@
 		
 		[output release];
 	}
+}
+
+//	--------------------------------------------------------------------------------------------------------------------
+//	method clickReceiveFeedback
+//	--------------------------------------------------------------------------------------------------------------------
+
+- (IBAction)clickReceiveFeedback:(NSButton *)aSender
+{
+	//	cleanup feedback timer
+	
+	[feedbackTimer invalidate];
+	
+	//	start feedback timer
+	
+	feedbackTimer = [NSTimer scheduledTimerWithTimeInterval:DEFAULT_FEEDBACK_INTERVAL 
+					 
+													 target:self 
+					 
+												   selector:@selector(timerFired:) 
+					 
+												   userInfo:nil 
+					 
+													repeats:YES];
+
+	//	trigger feedback
+	
+	[self timerFired:feedbackTimer];
 }
 
 //	--------------------------------------------------------------------------------------------------------------------
@@ -1222,63 +1322,62 @@
 }
 
 //	--------------------------------------------------------------------------------------------------------------------
-//	method timerFired
+//	method hexStringFromBytes
 //	--------------------------------------------------------------------------------------------------------------------
 
-- (void)timerFired:(NSTimer *)aTimer
+- (NSString *)hexStringFromBytes:(NSData *)aData
 {
-	//	TODO	debug feedback service
+	NSUInteger byteCount = [aData length];
 	
-/*	
-	if (aTimer == feedbackTimer)
+	if (byteCount == 0)
 	{
-		if (!socketFeedback)
-		{	
-			NSLog(@"Socket FB : Connect");
-			
-			BOOL isSandbox = (self.buttonSandbox.state == NSOnState);
-			
-			NSString *host = isSandbox ? HOST_FB_DEVELOPMENT : HOST_FB_PRODUCTION;
-			
-			NSUInteger port = isSandbox ? PORT_FB_DEVELOPMENT : PORT_FB_PRODUCTION; 
-			
-			//	create socket
-			
-			socketFeedback = [[AsyncSocket alloc] initWithDelegate:self];
-			
-			if (![socketFeedback connectToHost:host onPort:port error:nil])
-			{
-				[socketFeedback disconnect];
-				
-				[socketFeedback release]; socketFeedback = nil;
-			}
-		}
-		
-		//	update status
-		
-		[self updateStatus];
+		return @"";
 	}
-*/
+	
+	static const char hexDigits[] = "0123456789abcdef";
+	
+	const unsigned char *byteBuffer = [aData bytes];
+	
+	char *stringBuffer = (char *)malloc(byteCount * 2 + 1);
+	
+	char *hexChar = stringBuffer;
+	
+	while (byteCount-- > 0) 
+	{
+		const unsigned char c = *byteBuffer++;
+		
+		*hexChar++ = hexDigits[(c >> 4) & 0xF];
+		
+		*hexChar++ = hexDigits[(c >> 0) & 0xF];
+	}
+	
+	*hexChar = 0;
+	
+	NSString *hexBytes = [NSString stringWithUTF8String:stringBuffer];
+	
+	free(stringBuffer);
+	
+	return hexBytes;
 }
 
 //	--------------------------------------------------------------------------------------------------------------------
 //	method onSocket didConnectToHost
 //	--------------------------------------------------------------------------------------------------------------------
 
-- (void)onSocket:(AsyncSocket *)sock didConnectToHost:(NSString *)host port:(UInt16)port
+- (void)onSocket:(AsyncSocket *)aSocket didConnectToHost:(NSString *)aHost port:(UInt16)aPort
 {	
-	if (sock == socketGateway)
+	if (aSocket == socketGateway)
 	{
 		//	connection established
 		
-		NSLog(@"Socket GW : Connected : %@ : %d", host, port);
+		NSLog(@"Socket GW : Connected : %@ : %d", aHost, aPort);
 	}	
 	
-	if (sock == socketFeedback)
+	if (aSocket == socketFeedback)
 	{
 		//	connection established
 		
-		NSLog(@"Socket FB : Connected : %@ : %d", host, port);
+		NSLog(@"Socket FB : Connected : %@ : %d", aHost, aPort);
 	}
 	
 	NSMutableDictionary *settings = [NSMutableDictionary dictionary];
@@ -1301,45 +1400,31 @@
 		}
 	}
 
-	[sock startTLS:settings];
+	[aSocket startTLS:settings];
 }
 
 //	--------------------------------------------------------------------------------------------------------------------
 //	method onSocketDidSecure
 //	--------------------------------------------------------------------------------------------------------------------
 
-- (void)onSocketDidSecure:(AsyncSocket *)sock
+- (void)onSocketDidSecure:(AsyncSocket *)aSocket
 {
-	if (sock == socketGateway)
+	if (aSocket == socketGateway)
 	{
 		//	start reading
 		
 		[socketGateway readDataWithTimeout:DEFAULT_TIMEOUT tag:0];
-
-		//	start feedback timer
-		
-		feedbackTimer = [NSTimer scheduledTimerWithTimeInterval:60.0f 
-						 
-														 target:self 
-						 
-													   selector:@selector(timerFired:) 
-						 
-													   userInfo:nil 
-						 
-														repeats:YES];
-		
-		[self timerFired:feedbackTimer];
 		
 		//	connection established
 
 		NSLog(@"Socket GW : Secured");
 	}	
 	
-	if (sock == socketFeedback)
+	if (aSocket == socketFeedback)
 	{		
 		//	start reading
 
-		[socketFeedback readDataWithTimeout:DEFAULT_TIMEOUT tag:0];
+		[socketFeedback readDataToLength:FEEDBACK_PACKET_SIZE withTimeout:DEFAULT_TIMEOUT tag:0];
 
 		//	cleanup feedback timer
 		
@@ -1355,20 +1440,54 @@
 //	method onSocket didReadData
 //	--------------------------------------------------------------------------------------------------------------------
 
-- (void)onSocket:(AsyncSocket *)sock didReadData:(NSData *)data withTag:(long)tag
+- (void)onSocket:(AsyncSocket *)aSocket didReadData:(NSData *)aData withTag:(long)aTag
 {
-	if (sock == socketGateway)
+	if (aSocket == socketGateway)
 	{
-		[socketGateway readDataWithTimeout:DEFAULT_TIMEOUT tag:0];
-		
 		NSLog(@"Socket GW : Read");
+
+		[socketGateway readDataWithTimeout:DEFAULT_TIMEOUT tag:0];		
 	}	
 
-	if (sock == socketFeedback)
-	{
-		[socketFeedback readDataWithTimeout:DEFAULT_TIMEOUT tag:0];
+	if (aSocket == socketFeedback)
+	{	
+		//	packet received
 		
-		NSLog(@"Socket FB : Read");
+		//	TODO	this code is untested yet
+		
+		//	read timestamp
+		
+		time_t timeStamp = 0;
+				
+		[aData getBytes:&timeStamp length:sizeof(timeStamp)];
+
+		NSSwapBigIntToHost(timeStamp);
+
+		NSDate *date = [NSDate dateWithTimeIntervalSince1970:timeStamp];
+
+		//	read length
+		
+		unsigned short length = 0;
+
+		[aData getBytes:&length length:sizeof(length)];
+		
+		NSSwapBigShortToHost(length);
+		
+		//	read notification id
+				
+		const void *notificationIdBytes = [aData bytes];
+		
+		notificationIdBytes += sizeof(timeStamp) + sizeof(length);
+				
+		NSString *notificationId = [self hexStringFromBytes:[NSData dataWithBytes:notificationIdBytes length:32]];
+		
+		//	log
+		
+		NSLog(@"Socket FB : Read : &@ : %d : %@", date, length, notificationId);
+
+		//	start reading next packet
+		
+		[socketFeedback readDataToLength:FEEDBACK_PACKET_SIZE withTimeout:DEFAULT_TIMEOUT tag:0];
 	}	
 }
 
@@ -1376,13 +1495,13 @@
 //	method onSocket shouldTimeoutReadWithTag elapsed bytesDone
 //	--------------------------------------------------------------------------------------------------------------------
 
-- (NSTimeInterval)onSocket:(AsyncSocket *)sock
+- (NSTimeInterval)onSocket:(AsyncSocket *)aSocket
 
-  shouldTimeoutReadWithTag:(long)tag
+  shouldTimeoutReadWithTag:(long)aTag
 
-				   elapsed:(NSTimeInterval)elapsed
+				   elapsed:(NSTimeInterval)aElapsed
 
-				 bytesDone:(CFIndex)length
+				 bytesDone:(CFIndex)aLength
 {
 	return DEFAULT_TIMEOUT;
 }
@@ -1391,11 +1510,11 @@
 //	method onSocket willDisconnectWithError
 //	--------------------------------------------------------------------------------------------------------------------
 
-- (void)onSocket:(AsyncSocket *)sock willDisconnectWithError:(NSError *)err
+- (void)onSocket:(AsyncSocket *)aSocket willDisconnectWithError:(NSError *)aError
 {
-	if (sock == socketGateway)
+	if (aSocket == socketGateway)
 	{
-		NSLog(@"Socket GW : Error : %@", err);
+		NSLog(@"Socket GW : Error : %@", aError);
 	}	
 }
 
@@ -1403,11 +1522,11 @@
 //	method onSocketDidDisconnect
 //	--------------------------------------------------------------------------------------------------------------------
 
-- (void)onSocketDidDisconnect:(AsyncSocket *)sock
+- (void)onSocketDidDisconnect:(AsyncSocket *)aSocket
 {
 	//	cleanup socket gateway
 	
-	if (sock == socketGateway)
+	if (aSocket == socketGateway)
 	{				
 		//	cleanup socket gateway
 		
@@ -1436,7 +1555,7 @@
 
 	//	cleanup socket gateway
 	
-	if (sock == socketFeedback)
+	if (aSocket == socketFeedback)
 	{		
 		//	cleanup socket feedback
 		
@@ -1447,17 +1566,20 @@
 		[socketFeedback release]; socketFeedback = nil;
 
 		//	start feedback timer
-		
-		feedbackTimer = [NSTimer scheduledTimerWithTimeInterval:60.0f 
-						 
-														 target:self 
-						 
-													   selector:@selector(timerFired:) 
-						 
-													   userInfo:nil 
-						 
-														repeats:YES];
-	
+
+		if (socketGateway)
+		{
+			feedbackTimer = [NSTimer scheduledTimerWithTimeInterval:DEFAULT_FEEDBACK_INTERVAL 
+							 
+															 target:self 
+							 
+														   selector:@selector(timerFired:) 
+							 
+														   userInfo:nil 
+							 
+															repeats:YES];
+		}
+			
 		//	connection terminated
 		
 		NSLog(@"Socket FB : Terminated");

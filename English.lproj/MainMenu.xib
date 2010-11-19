@@ -1431,6 +1431,26 @@
 								<int key="NSPeriodicInterval">75</int>
 							</object>
 						</object>
+						<object class="NSButton" id="755421504">
+							<reference key="NSNextResponder" ref="439893737"/>
+							<int key="NSvFlags">289</int>
+							<string key="NSFrame">{{612, 134}, {111, 25}}</string>
+							<reference key="NSSuperview" ref="439893737"/>
+							<bool key="NSEnabled">YES</bool>
+							<object class="NSButtonCell" key="NSCell" id="93675100">
+								<int key="NSCellFlags">-2080244224</int>
+								<int key="NSCellFlags2">134217728</int>
+								<string key="NSContents">Feedback</string>
+								<reference key="NSSupport" ref="841202100"/>
+								<reference key="NSControlView" ref="755421504"/>
+								<int key="NSButtonFlags">-2033434369</int>
+								<int key="NSButtonFlags2">162</int>
+								<string key="NSAlternateContents"/>
+								<string key="NSKeyEquivalent"/>
+								<int key="NSPeriodicDelay">400</int>
+								<int key="NSPeriodicInterval">75</int>
+							</object>
+						</object>
 					</object>
 					<string key="NSFrameSize">{800, 600}</string>
 					<reference key="NSSuperview"/>
@@ -2097,6 +2117,22 @@
 					</object>
 					<int key="connectionID">881</int>
 				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">buttonReceiveFeedback</string>
+						<reference key="source" ref="976324537"/>
+						<reference key="destination" ref="755421504"/>
+					</object>
+					<int key="connectionID">889</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBActionConnection" key="connection">
+						<string key="label">clickReceiveFeedback:</string>
+						<reference key="source" ref="976324537"/>
+						<reference key="destination" ref="755421504"/>
+					</object>
+					<int key="connectionID">890</int>
+				</object>
 			</object>
 			<object class="IBMutableOrderedSet" key="objectRecords">
 				<object class="NSArray" key="orderedObjects">
@@ -2261,6 +2297,7 @@
 							<reference ref="678369617"/>
 							<reference ref="691200303"/>
 							<reference ref="783427439"/>
+							<reference ref="755421504"/>
 						</object>
 						<reference key="parent" ref="972006081"/>
 					</object>
@@ -2977,6 +3014,20 @@
 						<reference key="object" ref="26887813"/>
 						<reference key="parent" ref="1021397213"/>
 					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">886</int>
+						<reference key="object" ref="755421504"/>
+						<object class="NSMutableArray" key="children">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<reference ref="93675100"/>
+						</object>
+						<reference key="parent" ref="439893737"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">887</int>
+						<reference key="object" ref="93675100"/>
+						<reference key="parent" ref="755421504"/>
+					</object>
 				</object>
 			</object>
 			<object class="NSMutableDictionary" key="flattenedProperties">
@@ -3149,6 +3200,9 @@
 					<string>873.IBViewBoundsToFrameTransform</string>
 					<string>874.IBPluginDependency</string>
 					<string>876.IBPluginDependency</string>
+					<string>886.IBPluginDependency</string>
+					<string>886.IBViewBoundsToFrameTransform</string>
+					<string>887.IBPluginDependency</string>
 				</object>
 				<object class="NSMutableArray" key="dict.values">
 					<bool key="EncodedWithXMLCoder">YES</bool>
@@ -3181,9 +3235,9 @@
 					<integer value="1"/>
 					<string>{74, 862}</string>
 					<string>{{6, 978}, {478, 20}}</string>
-					<string>{{379, 227}, {800, 600}}</string>
+					<string>{{534, 295}, {800, 600}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>{{379, 227}, {800, 600}}</string>
+					<string>{{534, 295}, {800, 600}}</string>
 					<boolean value="NO"/>
 					<string>{{33, 99}, {480, 360}}</string>
 					<boolean value="YES"/>
@@ -3342,7 +3396,7 @@
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<object class="NSAffineTransform">
-						<bytes key="NSTransformStruct">P4AAAL+AAABEGQAAw4iAAA</bytes>
+						<bytes key="NSTransformStruct">P4AAAL+AAABEGQAAwzwAAA</bytes>
 					</object>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
@@ -3351,6 +3405,11 @@
 						<bytes key="NSTransformStruct">P4AAAL+AAABCvgAAw3AAAA</bytes>
 					</object>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<object class="NSAffineTransform">
+						<bytes key="NSTransformStruct">P4AAAL+AAABEGkAAwzcAAA</bytes>
+					</object>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 				</object>
 			</object>
@@ -3370,7 +3429,7 @@
 				</object>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">885</int>
+			<int key="maxID">890</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">
@@ -3389,12 +3448,14 @@
 							<string>clickDeleteNotificationID:</string>
 							<string>clickDisconnect:</string>
 							<string>clickHelp:</string>
+							<string>clickReceiveFeedback:</string>
 							<string>clickSandbox:</string>
 							<string>clickSendNotification:</string>
 							<string>clickSound:</string>
 						</object>
 						<object class="NSMutableArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>NSButton</string>
 							<string>NSButton</string>
 							<string>NSButton</string>
 							<string>NSButton</string>
@@ -3418,6 +3479,7 @@
 							<string>clickDeleteNotificationID:</string>
 							<string>clickDisconnect:</string>
 							<string>clickHelp:</string>
+							<string>clickReceiveFeedback:</string>
 							<string>clickSandbox:</string>
 							<string>clickSendNotification:</string>
 							<string>clickSound:</string>
@@ -3453,6 +3515,10 @@
 								<string key="candidateClassName">NSButton</string>
 							</object>
 							<object class="IBActionInfo">
+								<string key="name">clickReceiveFeedback:</string>
+								<string key="candidateClassName">NSButton</string>
+							</object>
+							<object class="IBActionInfo">
 								<string key="name">clickSandbox:</string>
 								<string key="candidateClassName">NSButton</string>
 							</object>
@@ -3476,6 +3542,7 @@
 							<string>buttonConnect</string>
 							<string>buttonDeleteNotificationID</string>
 							<string>buttonDisconnect</string>
+							<string>buttonReceiveFeedback</string>
 							<string>buttonSandbox</string>
 							<string>buttonSendNotification</string>
 							<string>buttonSound</string>
@@ -3490,6 +3557,7 @@
 						</object>
 						<object class="NSMutableArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>NSButton</string>
 							<string>NSButton</string>
 							<string>NSButton</string>
 							<string>NSButton</string>
@@ -3519,6 +3587,7 @@
 							<string>buttonConnect</string>
 							<string>buttonDeleteNotificationID</string>
 							<string>buttonDisconnect</string>
+							<string>buttonReceiveFeedback</string>
 							<string>buttonSandbox</string>
 							<string>buttonSendNotification</string>
 							<string>buttonSound</string>
@@ -3555,6 +3624,10 @@
 							</object>
 							<object class="IBToOneOutletInfo">
 								<string key="name">buttonDisconnect</string>
+								<string key="candidateClassName">NSButton</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">buttonReceiveFeedback</string>
 								<string key="candidateClassName">NSButton</string>
 							</object>
 							<object class="IBToOneOutletInfo">

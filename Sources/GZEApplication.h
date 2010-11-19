@@ -87,7 +87,9 @@
 	NSTextView *textViewOutput;
 	
 	NSButton *buttonSendNotification;
-	
+
+	NSButton *buttonReceiveFeedback;
+
 	NSTextField *textFieldFooter;
 
 	NSDictionary *textViewOutputAttributes;
@@ -141,6 +143,8 @@
 
 @property (assign) IBOutlet NSButton *buttonSendNotification;
 
+@property (assign) IBOutlet NSButton *buttonReceiveFeedback;
+
 @property (assign) IBOutlet NSTextField *textFieldFooter;
 
 //	--------------------------------------------------------------------------------------------------------------------
@@ -164,6 +168,8 @@
 - (IBAction)clickSound:(NSButton *)aSender;
 
 - (IBAction)clickSendNotification:(NSButton *)aSender;
+
+- (IBAction)clickReceiveFeedback:(NSButton *)aSender;
 
 - (IBAction)clickHelp:(NSButton *)aSender;
 
