@@ -19,6 +19,6 @@
 	<key>kSound</key>
 	<string>default</string>
 	<key>kHelpAPNS</key>
-	<string>http://developer.apple.com/library/ios/#documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG</string>
+	<string>https://github.com/Zambiorix/Apple-Push-Notification-Test</string>
 </dict>
 </plist>
