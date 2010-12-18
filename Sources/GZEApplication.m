@@ -807,9 +807,7 @@
 //	--------------------------------------------------------------------------------------------------------------------
 
 - (NSString *)buildPayloadWithAlert:(NSString *)aAlert withBadge:(NSString *)aBadge withSound:(NSString *)aSound
-{
-	NSLog(@"[%@][%@][%@]", aAlert, aBadge, aSound);
-	
+{	
 	//	payload : alert
 	
 	NSString *plAlert = nil;

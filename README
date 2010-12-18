@@ -84,7 +84,7 @@
 
 - (void)application:(UIApplication *)application didFailToRegisterForRemoteNotificationsWithError:(NSError *)error
 {
-	NSLog(@"Failed to register for Push Notifications : %@", error);
+	NSLog(@"Failed to register for Push Notifications : %@", [error localizedDescription]);
 }
 
 //	---------------------------------------------------------------------------------------------------------------
