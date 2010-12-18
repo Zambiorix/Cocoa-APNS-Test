@@ -808,6 +808,8 @@
 
 - (NSString *)buildPayloadWithAlert:(NSString *)aAlert withBadge:(NSString *)aBadge withSound:(NSString *)aSound
 {
+	NSLog(@"[%@][%@][%@]", aAlert, aBadge, aSound);
+	
 	//	payload : alert
 	
 	NSString *plAlert = nil;
@@ -988,7 +990,7 @@
 
 - (BOOL)formatSoundCheck:(GZEFormatSound *)aSound forString:(NSString *)aString
 {
-	NSString *payload = [self buildPayloadWithAlert:textFieldSound.stringValue 
+	NSString *payload = [self buildPayloadWithAlert:textFieldAlert.stringValue 
 						 
 										  withBadge:textFieldBadge.stringValue 
 						 
