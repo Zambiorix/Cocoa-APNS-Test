@@ -38,7 +38,11 @@
 
 #define APNS_DEVELOPMENT			@"Apple Development Push Services"
 
+#define APNS_DEVELOPMENT_IOS		@"Apple Development IOS Push Services"
+
 #define APNS_PRODUCTION				@"Apple Production Push Services"
+
+#define APNS_PRODUCTION_IOS			@"Apple Production IOS Push Services"
 
 #define HOST_GW_DEVELOPMENT			@"gateway.sandbox.push.apple.com"
 
@@ -256,10 +260,20 @@
 						if (isSandbox)
 						{
 							includeCertificate = [(NSString *)commonName hasPrefix:APNS_DEVELOPMENT];
+							
+							if (!includeCertificate)
+							{
+								includeCertificate = [(NSString *)commonName hasPrefix:APNS_DEVELOPMENT_IOS];
+							}
 						}
 						else
 						{
 							includeCertificate = [(NSString *)commonName hasPrefix:APNS_PRODUCTION];
+
+							if (!includeCertificate)
+							{
+								includeCertificate = [(NSString *)commonName hasPrefix:APNS_PRODUCTION_IOS];
+							}
 						}
 				
 						if (includeCertificate)
