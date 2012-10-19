@@ -91,7 +91,7 @@
 	{
 		NSUInteger value = [aPartialString intValue];
 		
-		return [delegate formatBadgeCheck:self forString:[NSString stringWithFormat:@"%d", value]];
+		return [delegate formatBadgeCheck:self forString:[NSString stringWithFormat:@"%ld", value]];
 	}
 	
 	return result;
