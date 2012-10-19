@@ -76,6 +76,8 @@
 
 #define JSON_SOUND_FORMAT			@"\"sound\":\"%@\""
 
+#define JSON_CONTENT_AVAILABLE      @"\"content-available\":1"
+
 #define JSON_MAX_PAYLOAD			255
 
 #define JSON_PAYLOAD_FORMAT			@"Payload size : %d / %d"
@@ -105,6 +107,8 @@
 #define KEY_BADGE					@"kBadge"
 
 #define KEY_SOUND_ENABLED			@"kSoundEnabled"
+
+#define KEY_CONTENT_AVAILABLE_ENABLED	@"kContentAvailableEnabled"
 
 #define KEY_SOUND					@"kSound"
 
@@ -159,6 +163,8 @@
 @synthesize buttonSound;
 
 @synthesize textFieldSound;
+
+@synthesize buttonContentAvailable;
 
 @synthesize textViewOutput;
 
@@ -467,6 +473,12 @@
 	buttonSound.state =  isSound ? NSOnState : NSOffState;
 	
 	textFieldSound.stringValue = [[NSUserDefaults standardUserDefaults] stringForKey:KEY_SOUND];
+    
+    //	loading defaults : content available
+    
+	BOOL isContentAvailable = [[NSUserDefaults standardUserDefaults] boolForKey:KEY_CONTENT_AVAILABLE_ENABLED];
+	
+	buttonContentAvailable.state =  isContentAvailable ? NSOnState : NSOffState;
 	
 	//	register drag types
 	
@@ -824,70 +836,37 @@
 {	
 	//	payload : alert
 	
-	NSString *plAlert = nil;
-	
+    NSMutableArray * payloadApsArray = [NSMutableArray array];
+    	
 	if (buttonAlert.state == NSOnState)
 	{
-		plAlert = [NSString stringWithFormat:JSON_ALERT_FORMAT,[self JSONString:aAlert]];
+		[payloadApsArray addObject:[NSString stringWithFormat:JSON_ALERT_FORMAT,[self JSONString:aAlert]]];
 	}
 	
 	//	payload : badge
 	
-	NSString *plBadge = nil;
-	
 	if (buttonBadge.state == NSOnState)
 	{			
-		plBadge = [NSString stringWithFormat:JSON_BADGE_FORMAT, aBadge.intValue];
+		[payloadApsArray addObject:[NSString stringWithFormat:JSON_BADGE_FORMAT, aBadge.intValue]];
 	}
 	
 	//	payload : sound
-	
-	NSString *plSound = nil;
-	
+		
 	if (buttonSound.state == NSOnState)
 	{		
-		plSound = [NSString stringWithFormat:JSON_SOUND_FORMAT, [self JSONString:aSound]];
+		[payloadApsArray addObject:[NSString stringWithFormat:JSON_SOUND_FORMAT, [self JSONString:aSound]]];
 	}
+    
+    // payload : content available
+    
+    if (buttonContentAvailable.state == NSOnState)
+    {
+        [payloadApsArray addObject:JSON_CONTENT_AVAILABLE];
+    }
 	
 	//	payload
 	
-	NSMutableString *payloadAPS = [NSMutableString string];
-	
-	if (plAlert)
-	{
-		if (payloadAPS.length > 0)
-		{
-			[payloadAPS appendFormat:@",%@", plAlert];
-		}
-		else 
-		{
-			[payloadAPS appendFormat:@"%@", plAlert];
-		}
-	}
-	
-	if (plBadge)
-	{
-		if (payloadAPS.length > 0)
-		{
-			[payloadAPS appendFormat:@",%@", plBadge];
-		}
-		else 
-		{
-			[payloadAPS appendFormat:@"%@", plBadge];
-		}
-	}
-	
-	if (plSound)
-	{
-		if (payloadAPS.length > 0)
-		{
-			[payloadAPS appendFormat:@",%@", plSound];
-		}
-		else 
-		{
-			[payloadAPS appendFormat:@"%@", plSound];
-		}
-	}
+	NSString *payloadAPS = [payloadApsArray componentsJoinedByString:@","];
 	
 	NSString *payload = [NSString stringWithFormat:JSON_FORMAT, payloadAPS];
 
@@ -1234,6 +1213,21 @@
 	BOOL isEnabled = (buttonSound.state == NSOnState);
 	
 	[[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithBool:isEnabled] forKey:KEY_SOUND_ENABLED];
+	
+	//	update status
+	
+	[self updateStatus];
+}
+
+//	--------------------------------------------------------------------------------------------------------------------
+//	method clickContentAvailable
+//	--------------------------------------------------------------------------------------------------------------------
+
+- (IBAction)clickContentAvailable:(NSButton *)aSender
+{
+	BOOL isEnabled = (buttonContentAvailable.state == NSOnState);
+	
+	[[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithBool:isEnabled] forKey:KEY_CONTENT_AVAILABLE_ENABLED];
 	
 	//	update status
 	

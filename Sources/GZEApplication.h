@@ -137,6 +137,8 @@
 
 @property (assign) IBOutlet NSButton *buttonSound;
 
+@property (assign) IBOutlet NSButton *buttonContentAvailable;
+
 @property (assign) IBOutlet NSTextField *textFieldSound;
 
 @property (assign) IBOutlet NSTextView *textViewOutput;
@@ -166,6 +168,8 @@
 - (IBAction)clickBadge:(NSButton *)aSender;
 
 - (IBAction)clickSound:(NSButton *)aSender;
+
+- (IBAction)clickContentAvailable:(NSButton *)aSender;
 
 - (IBAction)clickSendNotification:(NSButton *)aSender;
 
