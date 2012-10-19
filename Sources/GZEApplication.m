@@ -70,6 +70,8 @@
 
 #define JSON_FORMAT					@"{\"aps\":{%@}}"
 
+#define JSON_FORMAT_CUSTOM_DATA     @"{\"aps\":{%@},%@}"
+
 #define JSON_ALERT_FORMAT			@"\"alert\":\"%@\""
 
 #define JSON_BADGE_FORMAT			@"\"badge\":%d"
@@ -80,7 +82,7 @@
 
 #define JSON_MAX_PAYLOAD			255
 
-#define JSON_PAYLOAD_FORMAT			@"Payload size : %d / %d"
+#define JSON_PAYLOAD_FORMAT			@"Payload size : %ld / %d"
 
 #define FEEDBACK_PACKET_SIZE		38
 
@@ -113,6 +115,15 @@
 #define KEY_SOUND					@"kSound"
 
 #define KEY_HELP_APNS				@"kHelpAPNS"
+
+#define KEY_CUSTOM_KEY              @"kCustomKey"
+
+#define KEY_CUSTOM_VALUE            @"kCustomValue"
+
+#define KEY_CUSTOM_VALUES           @"kCustomValues"
+
+#define KEY_CUSTOM_VALUES_ENABLED   @"kCustomValuesEnabled"
+
 
 //	--------------------------------------------------------------------------------------------------------------------
 //	class GZEApplication
@@ -173,6 +184,14 @@
 @synthesize buttonReceiveFeedback;
 
 @synthesize textFieldFooter;
+
+@synthesize tableViewCustomKeys;
+
+@synthesize buttonAddCustomKey;
+
+@synthesize buttonCustomKeys;
+
+@synthesize buttonDeleteCustomKey;
 
 //	--------------------------------------------------------------------------------------------------------------------
 //	method getAttribute
@@ -357,6 +376,11 @@
 	[buttonAddNotificationID setEnabled:hasNotificationIDs];
 	
 	[buttonDeleteNotificationID setEnabled:hasNotificationIDs && hasNotificationIDsSelected];
+    
+    BOOL customKeysEnabled = buttonCustomKeys.state == NSOnState;
+    [buttonAddCustomKey setEnabled:customKeysEnabled];
+    [buttonDeleteCustomKey setEnabled:customKeysEnabled];
+    [tableViewCustomKeys setEnabled:customKeysEnabled];
 	
 	[textFieldAlert setEnabled:(buttonAlert.state == NSOnState)];
 
@@ -368,7 +392,7 @@
 
 	[buttonReceiveFeedback setEnabled:hasCertificate && !hasNoGWSocket && hasNoFBSocket];
 	
-	NSString *payload = [self buildPayloadWithAlert:textFieldAlert.stringValue 
+	NSString *payload = [self buildPayloadWithAlert:textFieldAlert.stringValue
 						 
 										  withBadge:textFieldBadge.stringValue 
 						 
@@ -449,6 +473,15 @@
 	}
 	
 	[tableViewNotificationIDs reloadData];
+    
+    // loading default : custom values
+    
+    customValues = [[NSUserDefaults standardUserDefaults] objectForKey:KEY_CUSTOM_VALUES];
+    
+    if (customValues == nil)
+    {
+        customValues = [[NSMutableArray alloc]init];
+    }
 	
 	//	loading defaults : alert
 
@@ -574,7 +607,7 @@
 {	
 	//	store certificate defaults
 	
-	NSUInteger index = comboBoxCertificate.indexOfSelectedItem;
+	NSInteger index = comboBoxCertificate.indexOfSelectedItem;
 
 	currentCertificate = (index >= 0) ? [certificates objectAtIndex:index] : nil;
 		
@@ -627,7 +660,11 @@
 
 - (NSInteger)numberOfRowsInTableView:(NSTableView *)tableView 
 {
-    return notificationIDs ? notificationIDs.count : 0;
+    if (tableView == tableViewCustomKeys) {
+        return customValues ? customValues.count : 0;
+    } else {
+        return notificationIDs ? notificationIDs.count : 0;
+    }
 }
 
 //	--------------------------------------------------------------------------------------------------------------------
@@ -635,8 +672,12 @@
 //	--------------------------------------------------------------------------------------------------------------------
 
 - (id)tableView:(NSTableView *)tableView objectValueForTableColumn:(NSTableColumn *)column row:(NSInteger)row 
-{	
-	return [[notificationIDs objectAtIndex:row] objectForKey:[column identifier]];
+{
+    if (tableView == tableViewCustomKeys) {
+        return [[customValues objectAtIndex:row] objectForKey:[column identifier]];
+    } else {
+        return [[notificationIDs objectAtIndex:row] objectForKey:[column identifier]];
+    }
 }
 
 //	--------------------------------------------------------------------------------------------------------------------
@@ -644,19 +685,28 @@
 //	--------------------------------------------------------------------------------------------------------------------
 
 - (void)tableView:(NSTableView *)tableView setObjectValue:(id)value forTableColumn:(NSTableColumn *)column row:(NSInteger)row 
-{ 	
-	if ([[column identifier] isEqualToString:KEY_NOTIFICATION_ID])
-	{		
-		if ([value isKindOfClass:[NSString class]])
-		{
-			value = [GZEFormatNotificationID arrayForString:value];
-		}
-	}
+{
+ 	if (tableView == tableViewCustomKeys) {
+    
+        [[customValues objectAtIndex:row] setObject:[NSString stringWithFormat:@"%@",value] forKey:[column identifier]];
+        
+        [[NSUserDefaults standardUserDefaults] setObject:customValues forKey:KEY_CUSTOM_VALUES];
+        
+    } else {
+        
+        if ([[column identifier] isEqualToString:KEY_NOTIFICATION_ID])
+        {
+            if ([value isKindOfClass:[NSString class]])
+            {
+                value = [GZEFormatNotificationID arrayForString:value];
+            }
+        }
 		
-	[[notificationIDs objectAtIndex:row] setObject:value forKey:[column identifier]];
-
-	[[NSUserDefaults standardUserDefaults] setObject:notificationIDs forKey:currentCertificate.key];
-
+        [[notificationIDs objectAtIndex:row] setObject:value forKey:[column identifier]];
+        
+        [[NSUserDefaults standardUserDefaults] setObject:notificationIDs forKey:currentCertificate.key];
+        
+    }
 	//	update status
 	
 	[self updateStatus];
@@ -682,8 +732,11 @@
 				 proposedRow:(NSInteger)row 
 	   
 	   proposedDropOperation:(NSTableViewDropOperation)operation
-{	
-    return NSDragOperationEvery;
+{
+	if (tv == tableViewCustomKeys)
+        return NSDragOperationNone;
+    else
+        return NSDragOperationEvery;
 }
 
 //	--------------------------------------------------------------------------------------------------------------------
@@ -698,6 +751,9 @@
 	
 	dropOperation:(NSTableViewDropOperation)operation
 {
+    if (aTableView == tableViewCustomKeys)
+        return NO;
+    
     NSPasteboard *pboard = [info draggingPasteboard];
 	
     NSString *dropped = [pboard stringForType:NSPasteboardTypeString];
@@ -867,8 +923,22 @@
 	//	payload
 	
 	NSString *payloadAPS = [payloadApsArray componentsJoinedByString:@","];
-	
-	NSString *payload = [NSString stringWithFormat:JSON_FORMAT, payloadAPS];
+    
+    NSString *payload = nil;
+    
+    if (buttonCustomKeys.state == NSOnState && customValues.count > 0) {
+        NSMutableArray * payloadCustomDataArray = [NSMutableArray array];
+        for (NSDictionary * d in customValues) {
+            NSString * customKey = [self JSONString:[d objectForKey:KEY_CUSTOM_KEY]];
+            NSString * customValue = [self JSONString:[d objectForKey:KEY_CUSTOM_VALUE]];
+            NSString * customDataRow = [NSString stringWithFormat:@"\"%@\":\"%@\"",customKey,customValue];
+            [payloadCustomDataArray addObject:customDataRow];
+        }
+        
+        payload = [NSString stringWithFormat:JSON_FORMAT_CUSTOM_DATA, payloadAPS, [payloadCustomDataArray componentsJoinedByString:@","]];
+    } else {
+        payload = [NSString stringWithFormat:JSON_FORMAT, payloadAPS];
+    }
 
 	return payload;
 }
@@ -1175,6 +1245,46 @@
 }
 
 //	--------------------------------------------------------------------------------------------------------------------
+//	method clickAddCustomKey
+//	--------------------------------------------------------------------------------------------------------------------
+
+- (IBAction)clickAddCustomKey:(NSButton *)aSender
+{
+	NSMutableDictionary *data = [NSMutableDictionary dictionaryWithObjectsAndKeys:
+								 
+								 @"key",		KEY_CUSTOM_KEY,
+								 
+								 @"value",		KEY_CUSTOM_VALUE,
+								 
+								 nil];
+	
+	[customValues addObject:data];
+	
+	NSIndexSet *indexes = [NSIndexSet indexSetWithIndex:(customValues.count - 1)];
+    
+	[tableViewCustomKeys reloadData];
+    
+	[tableViewCustomKeys selectRowIndexes:indexes byExtendingSelection:NO];
+    
+	[[NSUserDefaults standardUserDefaults] setObject:customValues forKey:KEY_CUSTOM_VALUES];
+}
+
+//	--------------------------------------------------------------------------------------------------------------------
+//	method clickDeleteCustomKey
+//	--------------------------------------------------------------------------------------------------------------------
+
+- (IBAction)clickDeleteCustomKey:(NSButton *)aSender
+{
+	[customValues removeObjectsAtIndexes:[tableViewCustomKeys selectedRowIndexes]];
+	
+	[tableViewCustomKeys reloadData];
+    
+	[tableViewCustomKeys selectRowIndexes:[NSIndexSet indexSet] byExtendingSelection:NO];
+    
+	[[NSUserDefaults standardUserDefaults] setObject:customValues forKey:KEY_CUSTOM_VALUES];
+}
+
+//	--------------------------------------------------------------------------------------------------------------------
 //	method clickAlert
 //	--------------------------------------------------------------------------------------------------------------------
 
@@ -1228,6 +1338,21 @@
 	BOOL isEnabled = (buttonContentAvailable.state == NSOnState);
 	
 	[[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithBool:isEnabled] forKey:KEY_CONTENT_AVAILABLE_ENABLED];
+	
+	//	update status
+	
+	[self updateStatus];
+}
+
+//	--------------------------------------------------------------------------------------------------------------------
+//	method clickCustomKeys
+//	--------------------------------------------------------------------------------------------------------------------
+
+- (IBAction)clickCustomKeys:(NSButton *)aSender
+{
+	BOOL isEnabled = (buttonCustomKeys.state == NSOnState);
+	
+	[[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithBool:isEnabled] forKey:KEY_CUSTOM_VALUES_ENABLED];
 	
 	//	update status
 	
@@ -1491,7 +1616,7 @@
 		
 		//	log
 		
-		NSLog(@"Socket FB : Read : &@ : %d : %@", date, length, notificationId);
+		NSLog(@"Socket FB : Read : %@ : %d : %@", date, length, notificationId);
 
 		//	start reading next packet
 		
