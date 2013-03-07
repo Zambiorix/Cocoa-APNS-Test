@@ -83,8 +83,12 @@
 	NSButton *buttonSound;
 
 	NSTextField *textFieldSound;
+    
+    NSButton *buttonContentAvailable;
 
 	NSTextView *textViewOutput;
+    
+    NSTableView *tableViewCustomKeys;
 	
 	NSButton *buttonSendNotification;
 
@@ -99,6 +103,8 @@
 	NSMutableArray *certificates;
 
 	NSMutableArray *notificationIDs;
+    
+    NSMutableArray *customValues;
 	
 	AsyncSocket *socketGateway;	
 
@@ -137,6 +143,8 @@
 
 @property (assign) IBOutlet NSButton *buttonSound;
 
+@property (assign) IBOutlet NSButton *buttonContentAvailable;
+
 @property (assign) IBOutlet NSTextField *textFieldSound;
 
 @property (assign) IBOutlet NSTextView *textViewOutput;
@@ -146,6 +154,14 @@
 @property (assign) IBOutlet NSButton *buttonReceiveFeedback;
 
 @property (assign) IBOutlet NSTextField *textFieldFooter;
+
+@property (assign) IBOutlet NSTableView *tableViewCustomKeys;
+
+@property (assign) IBOutlet NSButton *buttonAddCustomKey;
+
+@property (assign) IBOutlet NSButton *buttonDeleteCustomKey;
+
+@property (assign) IBOutlet NSButton *buttonCustomKeys;
 
 //	--------------------------------------------------------------------------------------------------------------------
 //	action prototypes
@@ -167,11 +183,19 @@
 
 - (IBAction)clickSound:(NSButton *)aSender;
 
+- (IBAction)clickContentAvailable:(NSButton *)aSender;
+
 - (IBAction)clickSendNotification:(NSButton *)aSender;
 
 - (IBAction)clickReceiveFeedback:(NSButton *)aSender;
 
 - (IBAction)clickHelp:(NSButton *)aSender;
+
+- (IBAction)clickAddCustomKey:(NSButton*)sender;
+
+- (IBAction)clickDeleteCustomKey:(NSButton*)sender;
+
+- (IBAction)clickCustomKeys:(NSButton*)sender;
 
 //	--------------------------------------------------------------------------------------------------------------------
 //	done
