@@ -651,7 +651,7 @@
 {
 	GZECertificate *certifcate = [certificates objectAtIndex:index];
 	
-	return certifcate.name;
+	return certifcate.key;
 }
 
 //	--------------------------------------------------------------------------------------------------------------------
