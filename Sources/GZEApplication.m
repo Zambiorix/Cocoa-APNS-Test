@@ -476,7 +476,7 @@
     
     // loading default : custom values
     
-    customValues = [[NSUserDefaults standardUserDefaults] objectForKey:KEY_CUSTOM_VALUES];
+    customValues = [[[NSUserDefaults standardUserDefaults] objectForKey:KEY_CUSTOM_VALUES] mutableCopy];
     
     if (customValues == nil)
     {
