@@ -651,7 +651,7 @@
 {
 	GZECertificate *certifcate = [certificates objectAtIndex:index];
 	
-	return certifcate.name;
+	return [NSString stringWithFormat:@"%@ (%@)", certifcate.key, certifcate.name];
 }
 
 //	--------------------------------------------------------------------------------------------------------------------
