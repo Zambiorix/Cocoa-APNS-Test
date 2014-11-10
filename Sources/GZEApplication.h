@@ -36,6 +36,8 @@
 
 #import "GZEFormatSound.h"
 
+#import "GZEFormatCategory.h"
+
 //	--------------------------------------------------------------------------------------------------------------------
 //	class references
 //	--------------------------------------------------------------------------------------------------------------------
@@ -50,7 +52,7 @@
 
 @interface GZEApplication : NSObject 
 <
-	NSApplicationDelegate, GZEFormatAlertDelegate, GZEFormatBadgeDelegate, GZEFormatSoundDelegate
+	NSApplicationDelegate, GZEFormatAlertDelegate, GZEFormatBadgeDelegate, GZEFormatSoundDelegate, GZEFormatCategoryDelegate
 > 
 {
 
@@ -83,6 +85,10 @@
 	NSButton *buttonSound;
 
 	NSTextField *textFieldSound;
+	
+	NSButton *buttonCategory;
+	
+	NSTextField *textFieldCategory;
     
     NSButton *buttonContentAvailable;
 
@@ -143,9 +149,13 @@
 
 @property (assign) IBOutlet NSButton *buttonSound;
 
-@property (assign) IBOutlet NSButton *buttonContentAvailable;
-
 @property (assign) IBOutlet NSTextField *textFieldSound;
+
+@property (assign) IBOutlet NSButton *buttonCategory;
+
+@property (assign) IBOutlet NSTextField *textFieldCategory;
+
+@property (assign) IBOutlet NSButton *buttonContentAvailable;
 
 @property (assign) IBOutlet NSTextView *textViewOutput;
 
@@ -182,6 +192,8 @@
 - (IBAction)clickBadge:(NSButton *)aSender;
 
 - (IBAction)clickSound:(NSButton *)aSender;
+
+- (IBAction)clickCategory:(NSButton *)sender;
 
 - (IBAction)clickContentAvailable:(NSButton *)aSender;
 
