@@ -477,6 +477,7 @@
     // loading default : custom values
     
     customValues = [[[NSUserDefaults standardUserDefaults] objectForKey:KEY_CUSTOM_VALUES] mutableCopy];
+    [tableViewCustomKeys reloadData];
     
     if (customValues == nil)
     {
@@ -525,6 +526,11 @@
 	
 	style.lineBreakMode = NSLineBreakByCharWrapping;
 	
+    textViewOutput.editable = YES;
+    textViewOutput.allowsUndo = YES;
+    textViewOutput.automaticSpellingCorrectionEnabled = NO;
+    textViewOutput.automaticQuoteSubstitutionEnabled = NO;
+    textViewOutput.delegate = (id<NSTextViewDelegate>)self;
 	textViewOutputAttributes = [[NSDictionary alloc] initWithObjectsAndKeys:
 								
 								font, NSFontAttributeName,
@@ -688,7 +694,9 @@
 {
  	if (tableView == tableViewCustomKeys) {
     
-        [[customValues objectAtIndex:row] setObject:[NSString stringWithFormat:@"%@",value] forKey:[column identifier]];
+        id customValue = [[customValues objectAtIndex:row] mutableCopy];
+        [customValue setObject:[NSString stringWithFormat:@"%@",value] forKey:[column identifier]];
+        [customValues replaceObjectAtIndex:row withObject:customValue];
         
         [[NSUserDefaults standardUserDefaults] setObject:customValues forKey:KEY_CUSTOM_VALUES];
         
@@ -815,6 +823,44 @@
 }
 
 //	--------------------------------------------------------------------------------------------------------------------
+//	method textView did change
+//	--------------------------------------------------------------------------------------------------------------------
+
+- (void)textDidChange:(NSNotification *)aNotification
+{
+    NSError *payloadError = nil;
+    id payloadObject = [NSJSONSerialization JSONObjectWithData:[self.textViewOutput.string dataUsingEncoding:NSUTF8StringEncoding] options:NSJSONReadingMutableContainers|NSJSONReadingMutableLeaves error:&payloadError];
+    if (payloadError) {
+        // not a valid json string, ignore
+        return;
+    }
+    
+    customValues = [NSMutableArray new];
+    [[payloadObject allKeys] enumerateObjectsUsingBlock:^(NSString *objKey, NSUInteger idx, BOOL *stop) {
+        if ([objKey isEqualToString:@"aps"]) {
+            NSDictionary *apsObject = payloadObject[objKey];
+            [[apsObject allKeys] enumerateObjectsUsingBlock:^(NSString *apsKey, NSUInteger idx2, BOOL *stop2) {
+                if ([apsKey isEqualToString:@"alert"]) {
+                	buttonAlert.state = NSOnState;
+                	textFieldAlert.stringValue = apsObject[apsKey];
+                } else if ([apsKey isEqualToString:@"badge"]) {
+                    buttonBadge.state = NSOnState;
+                    textFieldBadge.stringValue = [NSString stringWithFormat:@"%ld", (long)[apsObject[apsKey] integerValue]];
+                } else if ([apsKey isEqualToString:@"sound"]) {
+                    buttonSound.state = NSOnState;
+                    textFieldSound.stringValue = apsObject[apsKey];
+                }
+            }];
+        } else {
+            NSData *valueStringData = [NSJSONSerialization dataWithJSONObject:payloadObject[objKey] options:0 error:nil];
+            [customValues addObject:@{KEY_CUSTOM_KEY : objKey, KEY_CUSTOM_VALUE : [[NSString alloc] initWithData:valueStringData encoding:NSUTF8StringEncoding]}];
+        }
+    }];
+    
+    [tableViewCustomKeys reloadData];
+}
+
+//	--------------------------------------------------------------------------------------------------------------------
 //	method buildNotificationID onLocation
 //	--------------------------------------------------------------------------------------------------------------------
 
@@ -930,8 +976,13 @@
         NSMutableArray * payloadCustomDataArray = [NSMutableArray array];
         for (NSDictionary * d in customValues) {
             NSString * customKey = [self JSONString:[d objectForKey:KEY_CUSTOM_KEY]];
-            NSString * customValue = [self JSONString:[d objectForKey:KEY_CUSTOM_VALUE]];
-            NSString * customDataRow = [NSString stringWithFormat:@"\"%@\":\"%@\"",customKey,customValue];
+            NSString * customValue = [d objectForKey:KEY_CUSTOM_VALUE];
+            NSString * customDataRow = [NSString stringWithFormat:@"\"%@\":%@",customKey,customValue];
+            if (![customValue hasPrefix:@"{"] || ![customValue hasSuffix:@"}"]) {
+                // not custom object, use json string
+                customValue = [self JSONString:customValue];
+                customDataRow = [NSString stringWithFormat:@"\"%@\":\"%@\"",customKey,customValue];
+            }
             [payloadCustomDataArray addObject:customDataRow];
         }
         
@@ -958,11 +1009,12 @@
 
 - (NSUInteger)buildPayload:(NSMutableData *)aData
 {	
-	NSString *payload = [self buildPayloadWithAlert:textFieldAlert.stringValue 
-						 
-										  withBadge:textFieldBadge.stringValue 
-						 
-										  withSound:textFieldSound.stringValue];
+//	NSString *payload = [self buildPayloadWithAlert:textFieldAlert.stringValue 
+//						 
+//										  withBadge:textFieldBadge.stringValue 
+//						 
+//										  withSound:textFieldSound.stringValue];
+    NSString *payload = self.textViewOutput.string;
 	
 	const char *payloadChar = [payload cStringUsingEncoding:NSUTF8StringEncoding];
 	
