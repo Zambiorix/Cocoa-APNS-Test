@@ -25,7 +25,6 @@
                 <outlet property="buttonDeleteCustomKey" destination="907" id="917"/>
                 <outlet property="buttonDeleteNotificationID" destination="635" id="640"/>
                 <outlet property="buttonDisconnect" destination="673" id="683"/>
-                <outlet property="buttonReceiveFeedback" destination="886" id="889"/>
                 <outlet property="buttonSandbox" destination="537" id="547"/>
                 <outlet property="buttonSendNotification" destination="845" id="855"/>
                 <outlet property="buttonSound" destination="655" id="659"/>
@@ -558,7 +557,7 @@
                         </connections>
                     </textField>
                     <button verticalHuggingPriority="750" id="633">
-                        <rect key="frame" x="731" y="248" width="25" height="24"/>
+                        <rect key="frame" x="730" y="248" width="24" height="24"/>
                         <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
                         <buttonCell key="cell" type="smallSquare" bezelStyle="smallSquare" image="NSAddTemplate" imagePosition="overlaps" alignment="center" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="634">
                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
@@ -566,17 +565,6 @@
                         </buttonCell>
                         <connections>
                             <action selector="clickAddNotificationID:" target="494" id="641"/>
-                        </connections>
-                    </button>
-                    <button verticalHuggingPriority="750" id="635">
-                        <rect key="frame" x="755" y="248" width="25" height="24"/>
-                        <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
-                        <buttonCell key="cell" type="smallSquare" bezelStyle="smallSquare" image="NSRemoveTemplate" imagePosition="overlaps" alignment="center" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="636">
-                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                            <font key="font" metaFont="system"/>
-                        </buttonCell>
-                        <connections>
-                            <action selector="clickDeleteNotificationID:" target="494" id="642"/>
                         </connections>
                     </button>
                     <button verticalHuggingPriority="750" id="907">
@@ -640,7 +628,7 @@
                         </textFieldCell>
                     </textField>
                     <button verticalHuggingPriority="750" id="845">
-                        <rect key="frame" x="612" y="248" width="111" height="24"/>
+                        <rect key="frame" x="612" y="218" width="111" height="54"/>
                         <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
                         <buttonCell key="cell" type="smallSquare" title="Send" bezelStyle="smallSquare" imagePosition="overlaps" alignment="center" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="846">
                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
@@ -648,17 +636,6 @@
                         </buttonCell>
                         <connections>
                             <action selector="clickSendNotification:" target="494" id="853"/>
-                        </connections>
-                    </button>
-                    <button verticalHuggingPriority="750" id="886">
-                        <rect key="frame" x="612" y="218" width="111" height="24"/>
-                        <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
-                        <buttonCell key="cell" type="smallSquare" title="Feedback" bezelStyle="smallSquare" imagePosition="overlaps" alignment="center" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="887">
-                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                            <font key="font" metaFont="systemBold"/>
-                        </buttonCell>
-                        <connections>
-                            <action selector="clickReceiveFeedback:" target="494" id="890"/>
                         </connections>
                     </button>
                     <button id="891">
@@ -769,10 +746,21 @@
                             <autoresizingMask key="autoresizingMask"/>
                         </tableHeaderView>
                     </scrollView>
+                    <button verticalHuggingPriority="750" id="635">
+                        <rect key="frame" x="756" y="248" width="24" height="24"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
+                        <buttonCell key="cell" type="smallSquare" bezelStyle="smallSquare" image="NSRemoveTemplate" imagePosition="overlaps" alignment="center" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="636">
+                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                            <font key="font" metaFont="system"/>
+                        </buttonCell>
+                        <connections>
+                            <action selector="clickDeleteNotificationID:" target="494" id="642"/>
+                        </connections>
+                    </button>
                 </subviews>
             </view>
             <contentBorderThickness minY="21"/>
-            <point key="canvasLocation" x="519" y="386"/>
+            <point key="canvasLocation" x="528" y="418"/>
         </window>
         <customObject id="691" customClass="GZEFormatNotificationID"/>
         <customObject id="689" customClass="GZEFormatAlert">

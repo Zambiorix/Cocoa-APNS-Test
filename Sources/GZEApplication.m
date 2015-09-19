@@ -36,99 +36,99 @@
 //	defines
 //	--------------------------------------------------------------------------------------------------------------------
 
-#define APNS_DEVELOPMENT			@"Apple Development Push Services"
+#define APNS_DEVELOPMENT                @"Apple Development Push Services"
 
-#define APNS_DEVELOPMENT_IOS		@"Apple Development IOS Push Services"
+#define APNS_DEVELOPMENT_IOS            @"Apple Development IOS Push Services"
 
-#define APNS_PRODUCTION				@"Apple Production Push Services"
+#define APNS_PRODUCTION                 @"Apple Production Push Services"
 
-#define APNS_PRODUCTION_IOS			@"Apple Production IOS Push Services"
+#define APNS_PRODUCTION_IOS             @"Apple Production IOS Push Services"
 
-#define HOST_GW_DEVELOPMENT			@"gateway.sandbox.push.apple.com"
+#define HOST_GW_DEVELOPMENT             @"gateway.sandbox.push.apple.com"
 
-#define HOST_GW_PRODUCTION			@"gateway.push.apple.com"
+#define HOST_GW_PRODUCTION              @"gateway.push.apple.com"
 
-#define PORT_GW_DEVELOPMENT			2195
+#define PORT_GW_DEVELOPMENT             2195
 
-#define PORT_GW_PRODUCTION			2195
+#define PORT_GW_PRODUCTION              2195
 
-#define HOST_FB_DEVELOPMENT			@"feedback.sandbox.push.apple.com"
+#define HOST_FB_DEVELOPMENT             @"feedback.sandbox.push.apple.com"
 
-#define HOST_FB_PRODUCTION			@"feedback.push.apple.com"
+#define HOST_FB_PRODUCTION              @"feedback.push.apple.com"
 
-#define PORT_FB_DEVELOPMENT			2196
+#define PORT_FB_DEVELOPMENT             2196
 
-#define PORT_FB_PRODUCTION			2196
+#define PORT_FB_PRODUCTION              2196
 
-#define DEFAULT_TIMEOUT				10.0f
+#define DEFAULT_TIMEOUT                 10.0f
 
-#define DEFAULT_FEEDBACK_INTERVAL	600.0f
+#define DEFAULT_FEEDBACK_INTERVAL       600.0f
 
-#define DEFAULT_NOTIFICATION_ID		@"00000000-00000000-00000000-00000000-00000000-00000000-00000000-00000000"
+#define DEFAULT_NOTIFICATION_ID         @"00000000-00000000-00000000-00000000-00000000-00000000-00000000-00000000"
 
-#define DEFAULT_NOTIFICATION_NAME	@"?"
+#define DEFAULT_NOTIFICATION_NAME       @"?"
 
-#define JSON_FORMAT					@"{\"aps\":{%@}}"
+#define JSON_FORMAT                     @"{\"aps\":{%@}}"
 
-#define JSON_FORMAT_CUSTOM_DATA     @"{\"aps\":{%@},%@}"
+#define JSON_FORMAT_CUSTOM_DATA         @"{\"aps\":{%@},%@}"
 
-#define JSON_ALERT_FORMAT			@"\"alert\":\"%@\""
+#define JSON_ALERT_FORMAT               @"\"alert\":\"%@\""
 
-#define JSON_BADGE_FORMAT			@"\"badge\":%d"
+#define JSON_BADGE_FORMAT               @"\"badge\":%d"
 
-#define JSON_SOUND_FORMAT			@"\"sound\":\"%@\""
+#define JSON_SOUND_FORMAT               @"\"sound\":\"%@\""
 
-#define JSON_CATEGORY_FORMAT		@"\"category\":\"%@\""
+#define JSON_CATEGORY_FORMAT            @"\"category\":\"%@\""
 
-#define JSON_CONTENT_AVAILABLE      @"\"content-available\":1"
+#define JSON_CONTENT_AVAILABLE          @"\"content-available\":1"
 
-#define JSON_MAX_PAYLOAD			255
+#define JSON_MAX_PAYLOAD                255
 
-#define JSON_PAYLOAD_FORMAT			@"Payload size : %ld / %d"
+#define JSON_PAYLOAD_FORMAT             @"Payload size : %ld / %d"
 
-#define FEEDBACK_PACKET_SIZE		38
+#define FEEDBACK_PACKET_SIZE            38
 
 //	--------------------------------------------------------------------------------------------------------------------
 //	defines
 //	--------------------------------------------------------------------------------------------------------------------
 
-#define KEY_CERTIFICATE				@"kCertificate"
+#define KEY_CERTIFICATE                 @"kCertificate"
 
-#define KEY_SELECTED				@"kSelected"
+#define KEY_SELECTED                    @"kSelected"
 
-#define KEY_NAME					@"kName"
+#define KEY_NAME                        @"kName"
 
-#define KEY_NOTIFICATION_ID			@"kNotificationID"
+#define KEY_NOTIFICATION_ID             @"kNotificationID"
 
-#define KEY_SANDBOX					@"kSandbox"
+#define KEY_SANDBOX                     @"kSandbox"
 
-#define KEY_ALERT_ENABLED			@"kAlertEnabled"
+#define KEY_ALERT_ENABLED               @"kAlertEnabled"
 
-#define KEY_ALERT					@"kAlert"
+#define KEY_ALERT                       @"kAlert"
 
-#define KEY_BADGE_ENABLED			@"kBadgeEnabled"
+#define KEY_BADGE_ENABLED               @"kBadgeEnabled"
 
-#define KEY_BADGE					@"kBadge"
+#define KEY_BADGE                       @"kBadge"
 
-#define KEY_SOUND_ENABLED			@"kSoundEnabled"
+#define KEY_SOUND_ENABLED               @"kSoundEnabled"
 
-#define KEY_CATEGORY_ENABLED		@"kCategoryEnabled"
+#define KEY_CATEGORY_ENABLED            @"kCategoryEnabled"
 
 #define KEY_CONTENT_AVAILABLE_ENABLED	@"kContentAvailableEnabled"
 
-#define KEY_SOUND					@"kSound"
+#define KEY_SOUND                       @"kSound"
 
-#define KEY_CATEGORY				@"kCategory"
+#define KEY_CATEGORY                    @"kCategory"
 
-#define KEY_HELP_APNS				@"kHelpAPNS"
+#define KEY_HELP_APNS                   @"kHelpAPNS"
 
-#define KEY_CUSTOM_KEY              @"kCustomKey"
+#define KEY_CUSTOM_KEY                  @"kCustomKey"
 
-#define KEY_CUSTOM_VALUE            @"kCustomValue"
+#define KEY_CUSTOM_VALUE                @"kCustomValue"
 
-#define KEY_CUSTOM_VALUES           @"kCustomValues"
+#define KEY_CUSTOM_VALUES               @"kCustomValues"
 
-#define KEY_CUSTOM_VALUES_ENABLED   @"kCustomValuesEnabled"
+#define KEY_CUSTOM_VALUES_ENABLED       @"kCustomValuesEnabled"
 
 
 //	--------------------------------------------------------------------------------------------------------------------
@@ -190,8 +190,6 @@
 @synthesize textViewOutput;
 
 @synthesize buttonSendNotification;
-
-@synthesize buttonReceiveFeedback;
 
 @synthesize textFieldFooter;
 
@@ -353,8 +351,6 @@
 {
 	BOOL hasNoGWSocket = (socketGateway == nil);
 
-	BOOL hasNoFBSocket = (socketFeedback == nil);
-
 	BOOL hasCertificate = ([comboBoxCertificate indexOfSelectedItem] >= 0);
 
 	BOOL hasNotificationIDs = (notificationIDs != nil);
@@ -388,8 +384,11 @@
 	[buttonDeleteNotificationID setEnabled:hasNotificationIDs && hasNotificationIDsSelected];
     
     BOOL customKeysEnabled = buttonCustomKeys.state == NSOnState;
+    
     [buttonAddCustomKey setEnabled:customKeysEnabled];
+    
     [buttonDeleteCustomKey setEnabled:customKeysEnabled];
+    
     [tableViewCustomKeys setEnabled:customKeysEnabled];
 	
 	[textFieldAlert setEnabled:(buttonAlert.state == NSOnState)];
@@ -402,8 +401,6 @@
 
 	[buttonSendNotification setEnabled:!hasNoGWSocket && hasNotificationIDsToSend];
 
-	[buttonReceiveFeedback setEnabled:hasCertificate && !hasNoGWSocket && hasNoFBSocket];
-	
 	NSString *payload = [self buildPayloadWithAlert:textFieldAlert.stringValue
 						 
 										  withBadge:textFieldBadge.stringValue
@@ -583,19 +580,7 @@
 	[socketGateway disconnect];
 	
 	[socketGateway release]; socketGateway = nil;
-
-	//	cleanup socket feedback
-	
-	[socketFeedback setDelegate:nil];
-	
-	[socketFeedback disconnect];
-	
-	[socketFeedback release]; socketFeedback = nil;
-	
-	//	cleanup feedback timer
-	
-	[feedbackTimer invalidate]; feedbackTimer = nil;
-	
+		
 	//	cleanup certificates & notification id's
 	
 	[certificates release]; certificates = nil;
@@ -952,7 +937,8 @@
 	
 	//	payload : category
 	
-	if (buttonCategory.state == NSOnState) {
+	if (buttonCategory.state == NSOnState)
+    {
 		[payloadApsArray addObject:[NSString stringWithFormat:JSON_CATEGORY_FORMAT, [self JSONString:aCategory]]];
 	}
     
@@ -1137,7 +1123,8 @@
 //	method formatCategoryCheck forString
 //	--------------------------------------------------------------------------------------------------------------------
 
-- (BOOL)formatCategoryCheck:(GZEFormatCategory *)aCategory forString:(NSString *)aString {
+- (BOOL)formatCategoryCheck:(GZEFormatCategory *)aCategory forString:(NSString *)aString
+{
 	NSString *payload = [self buildPayloadWithAlert:textFieldAlert.stringValue 
 						 
 										  withBadge:textFieldBadge.stringValue 
@@ -1156,42 +1143,6 @@
 	textFieldFooter.stringValue = [NSString stringWithFormat:JSON_PAYLOAD_FORMAT, payload.length, JSON_MAX_PAYLOAD];
 	
 	return YES;
-}
-
-//	--------------------------------------------------------------------------------------------------------------------
-//	method timerFired
-//	--------------------------------------------------------------------------------------------------------------------
-
-- (void)timerFired:(NSTimer *)aTimer
-{	
-	if (aTimer == feedbackTimer)
-	{
-		if (!socketFeedback)
-		{	
-			NSLog(@"Socket FB : Connect");
-			
-			BOOL isSandbox = (self.buttonSandbox.state == NSOnState);
-			
-			NSString *host = isSandbox ? HOST_FB_DEVELOPMENT : HOST_FB_PRODUCTION;
-			
-			NSUInteger port = isSandbox ? PORT_FB_DEVELOPMENT : PORT_FB_PRODUCTION; 
-			
-			//	create socket
-			
-			socketFeedback = [[AsyncSocket alloc] initWithDelegate:self];
-			
-			if (![socketFeedback connectToHost:host onPort:port error:nil])
-			{
-				[socketFeedback disconnect];
-				
-				[socketFeedback release]; socketFeedback = nil;
-			}
-		}
-		
-		//	update status
-		
-		[self updateStatus];
-	}
 }
 
 //	--------------------------------------------------------------------------------------------------------------------
@@ -1241,19 +1192,6 @@
 		
 		[socketGateway autorelease]; socketGateway = nil;
 	}
-
-	//	cleanup socket feedback
-
-	if (socketFeedback)
-	{
-		[socketFeedback disconnect];
-		
-		[socketFeedback autorelease]; socketFeedback = nil;
-	}
-
-	//	cleanup feedback timer
-	
-	[feedbackTimer invalidate]; feedbackTimer = nil;
 	
 	//	update status
 
@@ -1521,33 +1459,6 @@
 }
 
 //	--------------------------------------------------------------------------------------------------------------------
-//	method clickReceiveFeedback
-//	--------------------------------------------------------------------------------------------------------------------
-
-- (IBAction)clickReceiveFeedback:(NSButton *)aSender
-{
-	//	cleanup feedback timer
-	
-	[feedbackTimer invalidate];
-	
-	//	start feedback timer
-	
-	feedbackTimer = [NSTimer scheduledTimerWithTimeInterval:DEFAULT_FEEDBACK_INTERVAL 
-					 
-													 target:self 
-					 
-												   selector:@selector(timerFired:) 
-					 
-												   userInfo:nil 
-					 
-													repeats:YES];
-
-	//	trigger feedback
-	
-	[self timerFired:feedbackTimer];
-}
-
-//	--------------------------------------------------------------------------------------------------------------------
 //	method clickHelp
 //	--------------------------------------------------------------------------------------------------------------------
 
@@ -1608,13 +1519,6 @@
 		//	connection established
 		
 		NSLog(@"Socket GW : Connected : %@ : %d", aHost, aPort);
-	}	
-	
-	if (aSocket == socketFeedback)
-	{
-		//	connection established
-		
-		NSLog(@"Socket FB : Connected : %@ : %d", aHost, aPort);
 	}
 	
 	NSMutableDictionary *settings = [NSMutableDictionary dictionary];
@@ -1655,21 +1559,6 @@
 		//	connection established
 
 		NSLog(@"Socket GW : Secured");
-	}	
-	
-	if (aSocket == socketFeedback)
-	{		
-		//	start reading
-
-		[socketFeedback readDataToLength:FEEDBACK_PACKET_SIZE withTimeout:DEFAULT_TIMEOUT tag:0];
-
-		//	cleanup feedback timer
-		
-		[feedbackTimer invalidate]; feedbackTimer = nil;
-		
-		//	connection established
-
-		NSLog(@"Socket FB : Secured");
 	}
 }
 
@@ -1684,47 +1573,6 @@
 		NSLog(@"Socket GW : Read");
 
 		[socketGateway readDataWithTimeout:DEFAULT_TIMEOUT tag:0];		
-	}	
-
-	if (aSocket == socketFeedback)
-	{	
-		//	packet received
-		
-		//	TODO	this code is untested yet
-		
-		//	read timestamp
-		
-		time_t timeStamp = 0;
-				
-		[aData getBytes:&timeStamp length:sizeof(timeStamp)];
-
-		NSSwapBigIntToHost(timeStamp);
-
-		NSDate *date = [NSDate dateWithTimeIntervalSince1970:timeStamp];
-
-		//	read length
-		
-		unsigned short length = 0;
-
-		[aData getBytes:&length length:sizeof(length)];
-		
-		NSSwapBigShortToHost(length);
-		
-		//	read notification id
-				
-		const void *notificationIdBytes = [aData bytes];
-		
-		notificationIdBytes += sizeof(timeStamp) + sizeof(length);
-				
-		NSString *notificationId = [self hexStringFromBytes:[NSData dataWithBytes:notificationIdBytes length:32]];
-		
-		//	log
-		
-		NSLog(@"Socket FB : Read : %@ : %d : %@", date, length, notificationId);
-
-		//	start reading next packet
-		
-		[socketFeedback readDataToLength:FEEDBACK_PACKET_SIZE withTimeout:DEFAULT_TIMEOUT tag:0];
 	}	
 }
 
@@ -1772,54 +1620,10 @@
 		[socketGateway disconnect];
 		
 		[socketGateway release]; socketGateway = nil;
-
-		//	cleanup socket feedback
-		
-		[socketFeedback setDelegate:nil];
-		
-		[socketFeedback disconnect];
-		
-		[socketFeedback release]; socketFeedback = nil;
 	
-		//	cleanup feedback timer
-		
-		[feedbackTimer invalidate]; feedbackTimer = nil;
-		
 		//	connection terminated
 		
 		NSLog(@"Socket GW : Terminated");
-	}
-
-	//	cleanup socket gateway
-	
-	if (aSocket == socketFeedback)
-	{		
-		//	cleanup socket feedback
-		
-		[socketFeedback setDelegate:nil];
-		
-		[socketFeedback disconnect];
-		
-		[socketFeedback release]; socketFeedback = nil;
-
-		//	start feedback timer
-
-		if (socketGateway)
-		{
-			feedbackTimer = [NSTimer scheduledTimerWithTimeInterval:DEFAULT_FEEDBACK_INTERVAL 
-							 
-															 target:self 
-							 
-														   selector:@selector(timerFired:) 
-							 
-														   userInfo:nil 
-							 
-															repeats:YES];
-		}
-			
-		//	connection terminated
-		
-		NSLog(@"Socket FB : Terminated");
 	}
 	
 	//	update status

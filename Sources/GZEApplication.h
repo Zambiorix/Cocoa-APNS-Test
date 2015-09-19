@@ -59,7 +59,7 @@
 @private
 	
     NSWindow *window;
-	
+    
 	NSButton *buttonConnect;
 
 	NSButton *buttonDisconnect;
@@ -67,14 +67,14 @@
 	NSComboBox *comboBoxCertificate;
 		
 	NSButton *buttonSandbox;
-	
+    
 	NSTableView *tableViewNotificationIDs;
-	
+    
 	NSButton *buttonAddNotificationID;
 	
 	NSButton *buttonDeleteNotificationID;
 	
-	NSButton *buttonAlert;
+    NSButton *buttonAlert;
 	
 	NSTextField *textFieldAlert;
 
@@ -92,13 +92,11 @@
     
     NSButton *buttonContentAvailable;
 
-	NSTextView *textViewOutput;
-    
     NSTableView *tableViewCustomKeys;
 	
+    NSTextView *textViewOutput;
+    
 	NSButton *buttonSendNotification;
-
-	NSButton *buttonReceiveFeedback;
 
 	NSTextField *textFieldFooter;
 
@@ -112,11 +110,7 @@
     
     NSMutableArray *customValues;
 	
-	AsyncSocket *socketGateway;	
-
-	AsyncSocket *socketFeedback;	
-	
-	NSTimer *feedbackTimer;
+	AsyncSocket *socketGateway;
 }
 
 //	--------------------------------------------------------------------------------------------------------------------
@@ -157,15 +151,13 @@
 
 @property (assign) IBOutlet NSButton *buttonContentAvailable;
 
+@property (assign) IBOutlet NSTableView *tableViewCustomKeys;
+
 @property (assign) IBOutlet NSTextView *textViewOutput;
 
 @property (assign) IBOutlet NSButton *buttonSendNotification;
 
-@property (assign) IBOutlet NSButton *buttonReceiveFeedback;
-
 @property (assign) IBOutlet NSTextField *textFieldFooter;
-
-@property (assign) IBOutlet NSTableView *tableViewCustomKeys;
 
 @property (assign) IBOutlet NSButton *buttonAddCustomKey;
 
@@ -198,8 +190,6 @@
 - (IBAction)clickContentAvailable:(NSButton *)aSender;
 
 - (IBAction)clickSendNotification:(NSButton *)aSender;
-
-- (IBAction)clickReceiveFeedback:(NSButton *)aSender;
 
 - (IBAction)clickHelp:(NSButton *)aSender;
 
