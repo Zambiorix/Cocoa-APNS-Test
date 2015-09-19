@@ -78,6 +78,8 @@
 
 #define JSON_SOUND_FORMAT			@"\"sound\":\"%@\""
 
+#define JSON_CATEGORY_FORMAT		@"\"category\":\"%@\""
+
 #define JSON_CONTENT_AVAILABLE      @"\"content-available\":1"
 
 #define JSON_MAX_PAYLOAD			255
@@ -110,9 +112,13 @@
 
 #define KEY_SOUND_ENABLED			@"kSoundEnabled"
 
+#define KEY_CATEGORY_ENABLED		@"kCategoryEnabled"
+
 #define KEY_CONTENT_AVAILABLE_ENABLED	@"kContentAvailableEnabled"
 
 #define KEY_SOUND					@"kSound"
+
+#define KEY_CATEGORY				@"kCategory"
 
 #define KEY_HELP_APNS				@"kHelpAPNS"
 
@@ -131,7 +137,7 @@
 
 @interface GZEApplication (Private)
 
-- (NSString *)buildPayloadWithAlert:(NSString *)aAlert withBadge:(NSString *)aBadge withSound:(NSString *)aSound;
+- (NSString *)buildPayloadWithAlert:(NSString *)aAlert withBadge:(NSString *)aBadge withSound:(NSString *)aSound withCategory:(NSString *)aCategroy;
 
 - (NSAttributedString *)buildFormattedPayload:(NSString *)aPayload;
 
@@ -174,6 +180,10 @@
 @synthesize buttonSound;
 
 @synthesize textFieldSound;
+
+@synthesize buttonCategory;
+
+@synthesize textFieldCategory;
 
 @synthesize buttonContentAvailable;
 
@@ -387,6 +397,8 @@
 	[textFieldBadge setEnabled:(buttonBadge.state == NSOnState)];
 
 	[textFieldSound setEnabled:(buttonSound.state == NSOnState)];
+	
+	[textFieldCategory setEnabled:(buttonCategory.state == NSOnState)];
 
 	[buttonSendNotification setEnabled:!hasNoGWSocket && hasNotificationIDsToSend];
 
@@ -394,9 +406,11 @@
 	
 	NSString *payload = [self buildPayloadWithAlert:textFieldAlert.stringValue
 						 
-										  withBadge:textFieldBadge.stringValue 
+										  withBadge:textFieldBadge.stringValue
 						 
-										  withSound:textFieldSound.stringValue];
+										  withSound:textFieldSound.stringValue
+						 
+									   withCategory:textFieldCategory.stringValue];
 		
 	[[textViewOutput textStorage] setAttributedString:[self buildFormattedPayload:payload]];
 		
@@ -506,7 +520,15 @@
 	buttonSound.state =  isSound ? NSOnState : NSOffState;
 	
 	textFieldSound.stringValue = [[NSUserDefaults standardUserDefaults] stringForKey:KEY_SOUND];
-    
+	
+	// loading defaults : category
+	
+	BOOL isCategory = [[NSUserDefaults standardUserDefaults] boolForKey:KEY_CATEGORY_ENABLED];
+	
+	buttonCategory.state = isCategory ? NSOnState : NSOffState;
+	
+//	textFieldCategory.stringValue = [[NSUserDefaults standardUserDefaults] stringForKey:KEY_CATEGORY];
+	
     //	loading defaults : content available
     
 	BOOL isContentAvailable = [[NSUserDefaults standardUserDefaults] boolForKey:KEY_CONTENT_AVAILABLE_ENABLED];
@@ -885,10 +907,10 @@
 }
 
 //	--------------------------------------------------------------------------------------------------------------------
-//	method buildPayloadWithAlert withBadge withSound
+//	method buildPayloadWithAlert withBadge withSound withCategory
 //	--------------------------------------------------------------------------------------------------------------------
 
-- (NSString *)buildPayloadWithAlert:(NSString *)aAlert withBadge:(NSString *)aBadge withSound:(NSString *)aSound
+- (NSString *)buildPayloadWithAlert:(NSString *)aAlert withBadge:(NSString *)aBadge withSound:(NSString *)aSound withCategory:(NSString *)aCategory
 {	
 	//	payload : alert
 	
@@ -911,6 +933,12 @@
 	if (buttonSound.state == NSOnState)
 	{		
 		[payloadApsArray addObject:[NSString stringWithFormat:JSON_SOUND_FORMAT, [self JSONString:aSound]]];
+	}
+	
+	//	payload : category
+	
+	if (buttonCategory.state == NSOnState) {
+		[payloadApsArray addObject:[NSString stringWithFormat:JSON_CATEGORY_FORMAT, [self JSONString:aCategory]]];
 	}
     
     // payload : content available
@@ -962,7 +990,9 @@
 						 
 										  withBadge:textFieldBadge.stringValue 
 						 
-										  withSound:textFieldSound.stringValue];
+										  withSound:textFieldSound.stringValue
+						 
+									   withCategory:textFieldCategory.stringValue];
 	
 	const char *payloadChar = [payload cStringUsingEncoding:NSUTF8StringEncoding];
 	
@@ -994,6 +1024,11 @@
 		[[NSUserDefaults standardUserDefaults] setObject:object forKey:KEY_SOUND];
 	}
 	
+	if (control == textFieldCategory)
+	{
+		[[NSUserDefaults standardUserDefaults] setObject:object forKey:KEY_CATEGORY];
+	}
+	
 	return YES;
 }
 
@@ -1007,7 +1042,9 @@
 										  
 										  withBadge:textFieldBadge.stringValue 
 										  
-										  withSound:textFieldSound.stringValue];
+										  withSound:textFieldSound.stringValue
+						 
+									   withCategory:textFieldCategory.stringValue];
 
 	if (payload.length > JSON_MAX_PAYLOAD)
 	{		
@@ -1031,7 +1068,9 @@
 						 
 										  withBadge:aString 
 						 
-										  withSound:textFieldSound.stringValue];
+										  withSound:textFieldSound.stringValue
+						 
+									   withCategory:textFieldCategory.stringValue];
 
 	if (payload.length > JSON_MAX_PAYLOAD)
 	{		
@@ -1051,11 +1090,38 @@
 
 - (BOOL)formatSoundCheck:(GZEFormatSound *)aSound forString:(NSString *)aString
 {
+	NSString *payload = [self buildPayloadWithAlert:textFieldAlert.stringValue
+						 
+										  withBadge:textFieldBadge.stringValue 
+						 
+										  withSound:aString
+						 
+									   withCategory:textFieldCategory.stringValue];
+	
+	if (payload.length > JSON_MAX_PAYLOAD)
+	{		
+		return NO;
+	}
+	
+	[[textViewOutput textStorage] setAttributedString:[self buildFormattedPayload:payload]];
+	
+	textFieldFooter.stringValue = [NSString stringWithFormat:JSON_PAYLOAD_FORMAT, payload.length, JSON_MAX_PAYLOAD];
+	
+	return YES;
+}
+
+//	--------------------------------------------------------------------------------------------------------------------
+//	method formatCategoryCheck forString
+//	--------------------------------------------------------------------------------------------------------------------
+
+- (BOOL)formatCategoryCheck:(GZEFormatCategory *)aCategory forString:(NSString *)aString {
 	NSString *payload = [self buildPayloadWithAlert:textFieldAlert.stringValue 
 						 
 										  withBadge:textFieldBadge.stringValue 
 						 
-										  withSound:aString];
+										  withSound:aString
+						 
+									   withCategory:textFieldCategory.stringValue];
 	
 	if (payload.length > JSON_MAX_PAYLOAD)
 	{		
@@ -1323,6 +1389,21 @@
 	BOOL isEnabled = (buttonSound.state == NSOnState);
 	
 	[[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithBool:isEnabled] forKey:KEY_SOUND_ENABLED];
+	
+	//	update status
+	
+	[self updateStatus];
+}
+
+//	--------------------------------------------------------------------------------------------------------------------
+//	method clickCategory
+//	--------------------------------------------------------------------------------------------------------------------
+
+- (IBAction)clickCategory:(NSButton *)sender
+{
+	BOOL isEnabled = (buttonCategory.state == NSOnState);
+	
+	[[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithBool:isEnabled] forKey:KEY_CATEGORY_ENABLED];
 	
 	//	update status
 	
