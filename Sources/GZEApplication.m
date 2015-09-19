@@ -673,7 +673,7 @@
 {
 	GZECertificate *certifcate = [certificates objectAtIndex:index];
 	
-	return certifcate.key;
+    return [NSString stringWithFormat:@"%@ (%@)", certifcate.key, certifcate.name];
 }
 
 //	--------------------------------------------------------------------------------------------------------------------
@@ -682,9 +682,12 @@
 
 - (NSInteger)numberOfRowsInTableView:(NSTableView *)tableView 
 {
-    if (tableView == tableViewCustomKeys) {
+    if (tableView == tableViewCustomKeys)
+    {
         return customValues ? customValues.count : 0;
-    } else {
+    }
+    else
+    {
         return notificationIDs ? notificationIDs.count : 0;
     }
 }
@@ -695,9 +698,12 @@
 
 - (id)tableView:(NSTableView *)tableView objectValueForTableColumn:(NSTableColumn *)column row:(NSInteger)row 
 {
-    if (tableView == tableViewCustomKeys) {
+    if (tableView == tableViewCustomKeys)
+    {
         return [[customValues objectAtIndex:row] objectForKey:[column identifier]];
-    } else {
+    }
+    else
+    {
         return [[notificationIDs objectAtIndex:row] objectForKey:[column identifier]];
     }
 }
@@ -714,7 +720,9 @@
         
         [[NSUserDefaults standardUserDefaults] setObject:customValues forKey:KEY_CUSTOM_VALUES];
         
-    } else {
+    }
+    else
+    {
         
         if ([[column identifier] isEqualToString:KEY_NOTIFICATION_ID])
         {
@@ -729,6 +737,7 @@
         [[NSUserDefaults standardUserDefaults] setObject:notificationIDs forKey:currentCertificate.key];
         
     }
+    
 	//	update status
 	
 	[self updateStatus];
@@ -747,7 +756,7 @@
 //	method tableView validateDrop validateDrop proposedRow proposedDropOperation
 //	--------------------------------------------------------------------------------------------------------------------
 
-- (NSDragOperation)tableView:(NSTableView*)tv 
+- (NSDragOperation)tableView:(NSTableView*)tableView
 				
 				validateDrop:(id<NSDraggingInfo>)info 
 				 
@@ -755,17 +764,21 @@
 	   
 	   proposedDropOperation:(NSTableViewDropOperation)operation
 {
-	if (tv == tableViewCustomKeys)
+	if (tableView == tableViewCustomKeys)
+    {
         return NSDragOperationNone;
+    }
     else
+    {
         return NSDragOperationEvery;
+    }
 }
 
 //	--------------------------------------------------------------------------------------------------------------------
 //	method tableView acceptDrop validateDrop proposedRow proposedDropOperation
 //	--------------------------------------------------------------------------------------------------------------------
 
-- (BOOL)tableView:(NSTableView *)aTableView 
+- (BOOL)tableView:(NSTableView *)tableView
 	   
 	   acceptDrop:(id<NSDraggingInfo>)info
 
@@ -773,8 +786,10 @@
 	
 	dropOperation:(NSTableViewDropOperation)operation
 {
-    if (aTableView == tableViewCustomKeys)
+    if (tableView == tableViewCustomKeys)
+    {
         return NO;
+    }
     
     NSPasteboard *pboard = [info draggingPasteboard];
 	
@@ -954,17 +969,25 @@
     
     NSString *payload = nil;
     
-    if (buttonCustomKeys.state == NSOnState && customValues.count > 0) {
+    if (buttonCustomKeys.state == NSOnState && customValues.count > 0)
+    {
         NSMutableArray * payloadCustomDataArray = [NSMutableArray array];
-        for (NSDictionary * d in customValues) {
+        
+        for (NSDictionary * d in customValues)
+        {
             NSString * customKey = [self JSONString:[d objectForKey:KEY_CUSTOM_KEY]];
+            
             NSString * customValue = [self JSONString:[d objectForKey:KEY_CUSTOM_VALUE]];
+            
             NSString * customDataRow = [NSString stringWithFormat:@"\"%@\":\"%@\"",customKey,customValue];
+            
             [payloadCustomDataArray addObject:customDataRow];
         }
         
         payload = [NSString stringWithFormat:JSON_FORMAT_CUSTOM_DATA, payloadAPS, [payloadCustomDataArray componentsJoinedByString:@","]];
-    } else {
+    }
+    else
+    {
         payload = [NSString stringWithFormat:JSON_FORMAT, payloadAPS];
     }
 
